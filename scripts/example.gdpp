@@ -1,0 +1,2 @@
+func main(s:string, n:int) -> void:
+	print("Hello World")
