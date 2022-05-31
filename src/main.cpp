@@ -1,7 +1,7 @@
 #include <iostream>
 // #include "scanner.h"
-#include "ast_printer.hpp"
-
+// #include "ast_printer.hpp"
+#include "types.h"
 // using namespace GDPP;
 
 int main() 
@@ -18,8 +18,9 @@ int main()
 
 
 
-	GDPP::ASTPrinter printer;
-	std::string str = "hello world";
-	GDPP::Literal literal(&str);
-	std::cout << "test: " << printer.print(&literal) << std::endl;
+	// GDPP::ASTPrinter printer;
+	// std::string str = "hello world";
+	// GDPP::Literal literal(&str);
+	// std::cout << "test: " << printer.print(&literal) << std::endl;
+	std::cout << sizeof(GDPP::variant) << std::endl;
 }

@@ -3,7 +3,6 @@
 
 namespace GDPP
 {
-	
     struct Binary;
     struct Assign;
     struct Call;
@@ -87,11 +86,12 @@ namespace GDPP
 
     };
     
+	
     struct Literal : Expression
     {
         public:
-            std::string* value;
-            Literal(std::string* p_value);
+            variant value;
+            Literal(variant p_value);
             void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };

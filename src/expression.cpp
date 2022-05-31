@@ -33,7 +33,7 @@ Grouping::Grouping(Expression* p_expression)
     expression = p_expression;
 }
 
-Literal::Literal(std::string* p_value)
+Literal::Literal(variant p_value)
 {
     value = p_value;
 }

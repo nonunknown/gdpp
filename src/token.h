@@ -2,6 +2,7 @@
 #include <vector>
 #include <any>
 #include <string>
+#include "types.h"
 
 namespace GDPP
 {
@@ -54,11 +55,11 @@ namespace GDPP
             ~Token();
 
             std::string ToString();
+            TokenType type;
+            variant literal;
         
         private:
-            TokenType type;
             std::string lexeme;
-            std::string literal;
             int line, indentLevel;
 
     };
