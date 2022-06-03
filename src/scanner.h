@@ -1,12 +1,13 @@
+#ifndef SCAN_H
+#define SCAN_H
 
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <map>
 #include <stdexcept>
-
-#include "error.h"
 #include "token.h"
+#include "error.h"
 
 namespace GDPP // means GDScript Plus Plus
 {
@@ -16,15 +17,15 @@ namespace GDPP // means GDScript Plus Plus
         private:
             std::string sourceCode;
             std::vector<Token> tokens;
-            std::map<std::string, Token::TokenType> keywords;
+            std::map<std::string, TokenType> keywords;
             int start, current, line,indentLevel;
 
             char Advance();
             char Peek();
             char PeekNext();
             void ScanToken();
-            void AddToken(Token::TokenType p_type);
-            void AddToken(Token::TokenType p_type, std::string literal);
+            void AddToken(TokenType p_type);
+            void AddToken(TokenType p_type, std::string literal);
             void EatStringLiteral();
             void EatNumber();
             void EatIdentifier();
@@ -48,3 +49,5 @@ namespace GDPP // means GDScript Plus Plus
     };
 
 }
+
+#endif

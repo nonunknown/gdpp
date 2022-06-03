@@ -33,11 +33,6 @@ Grouping::Grouping(Expression* p_expression)
     expression = p_expression;
 }
 
-Literal::Literal(variant p_value)
-{
-    value = p_value;
-}
-
 Logical::Logical(Expression* p_left, Token* p_op, Expression* p_right)
 {
     left = p_left;

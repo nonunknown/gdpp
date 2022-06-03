@@ -1,20 +1,20 @@
 #include <iostream>
-// #include "scanner.h"
+#include "scanner.h"
 // #include "ast_printer.hpp"
 #include "types.h"
-// using namespace GDPP;
+using namespace GDPP;
 
 int main() 
 {
 
-    // Scanner scanner;
+    Scanner scanner;
 
     // Error::Report(10, "Nowhere", "Its ok, its just a test");
 
-    // scanner.ReadFile("./scripts/example.gdpp");
-    // std::cout << scanner.GetSourceCode() << std::endl;
-    // std::cout << std::endl;
-    // scanner.ScanTokens();
+    scanner.ReadFile("./scripts/example.gdpp");
+    std::cout << scanner.GetSourceCode() << std::endl;
+    std::cout << std::endl;
+    scanner.ScanTokens();
 
 
 

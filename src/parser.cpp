@@ -11,59 +11,59 @@ Parser::Parser(std::vector<Token*> p_tokens)
 //EXPRESSIONS ===========
 
 // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-Expression* Parser::Comparision()
+Expression Parser::Comparision()
 {
-	Expression* expr = Term();
-	std::vector<Token::TokenType> types = {Token::TokenType::GREATER, Token::TokenType::GREATER_EQUAL, Token::TokenType::LESS, Token::TokenType::LESS_EQUAL};
+	Expression expr = Term();
+	std::vector<TokenType> types = {TokenType::GREATER, TokenType::GREATER_EQUAL, TokenType::LESS, TokenType::LESS_EQUAL};
 	while( Match(&types) )
 	{
 		Token* op = Previous();
-		Expression* right = Term();
-		expr = &Binary(expr, op, right);
+		Expression right = Term();
+		expr = Binary(&expr, op, &right);
 	}
 	return expr;
 }
 
 //equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-Expression* Parser::Equality()
+Expression Parser::Equality()
 {
-	Expression* expr = Comparision();
-	std::vector<Token::TokenType> types = {Token::TokenType::BANG_EQUAL, Token::TokenType::EQUAL_EQUAL};
+	Expression expr = Comparision();
+	std::vector<TokenType> types = {TokenType::BANG_EQUAL, TokenType::EQUAL_EQUAL};
 	while( Match(&types) )
 	{
 		Token* op = Previous();
-		Expression* right = Comparision();
-		expr = &Binary(expr, op, right);
+		Expression right = Comparision();
+		expr = Binary(&expr, op, &right);
 
 	}
 	return expr;
 }
 
 //term       → factor ( ( "-" | "+" ) factor )* ;
-Expression* Parser::Term()
+Expression Parser::Term()
 {
-	Expression* expr = Factor();
-	std::vector<Token::TokenType> types = {Token::TokenType::MINUS, Token::TokenType::PLUS};
+	Expression expr = Factor();
+	std::vector<TokenType> types = {TokenType::MINUS, TokenType::PLUS};
 	while(Match(&types))
 	{
 		Token* op = Previous();
-		Expression* right = Factor();
-		expr = &Binary(expr, op, right);
+		Expression right = Factor();
+		expr = Binary(&expr, op, &right);
 	}
 
 	return expr;
 }
 
 //factor         → unary ( ( "/" | "*" ) unary )* ;
-Expression* Parser::Factor()
+Expression Parser::Factor()
 {
-	Expression* expr = Parser::Unary();
-	std::vector<Token::TokenType> types = {Token::TokenType::SLASH_FORWARD, Token::TokenType::STAR};
+	Expression expr = Unary();
+	std::vector<TokenType> types = {TokenType::SLASH_FORWARD, TokenType::STAR};
 	while(Match(&types))
 	{
 		Token* op = Previous();
-		Expression* right = Parser::Unary();
-		expr = &Binary(expr, op, right);
+		Expression right = Parser::Unary();
+		expr = Binary(&expr, op, &right);
 	}
 
 	return expr;
@@ -71,49 +71,51 @@ Expression* Parser::Factor()
 
 //unary          → ( "!" | "-" ) unary | primary ;
 
-Expression* Parser::Unary()
+Expression Parser::Unary()
 {
-	std::vector<Token::TokenType> types = {Token::TokenType::BANG, Token::TokenType::MINUS};
+	std::vector<TokenType> types = {TokenType::BANG, TokenType::MINUS};
 	if (Match(&types))
 	{
 		Token* op = Previous();
-		Expression* right = Parser::Unary();
-		return &GDPP::Unary(op, right);
+		Expression right = Parser::Unary();
+		return GDPP::Unary(op, &right);
 	}
 
 	return Primary();
 }
 
 //primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
-Expression* Parser::Primary()
+Expression Parser::Primary()
 {
-	if (Match(Token::TokenType::FALSE))
+	if (Match(TokenType::FALSE))
 	{
-		return &Literal(false);
+		return Literal(false);
 	}
-	if (Match(Token::TokenType::TRUE))
+	if (Match(TokenType::TRUE))
 	{
-		return &Literal(true);
+		return Literal(true);
 	}
 
-	std::vector<Token::TokenType> types = {Token::TokenType::NUMBER, Token::TokenType::STRING};
+	std::vector<TokenType> types = {TokenType::NUMBER, TokenType::STRING};
 
 	if (Match(&types))
 	{
-		return &Literal(Previous()->literal);
+		return Literal(Previous()->literal);
 	}
 
-	if (Match(Token::TokenType::LEFT_PAREN))
+	if (Match(TokenType::LEFT_PAREN))
 	{
-		Expression* expr = Expr();
-		Consume(Token::TokenType::RIGHT_PAREN, "Expect ')' after expression");
-		return &Grouping(expr);
+		Expression expr = Expr();
+		Consume(TokenType::RIGHT_PAREN, "Expect ')' after expression");
+		return Grouping(&expr);
 	}
 
+	std::cout << "Error on Primary(): End of function reached" << std::endl; 
+	exit(-1);
 
 }
 
-Expression* Parser::Expr()
+Expression Parser::Expr()
 {
 	return Equality();
 }
@@ -121,15 +123,15 @@ Expression* Parser::Expr()
 // END EXPRESSIONS ==================
 
 
-Token* Parser::Consume(Token::TokenType p_type, std::string msg)
+Token* Parser::Consume(TokenType p_type, std::string msg)
 {
 	if (Check(p_type)) return Advance();
-	// throw Error(Peek(), msg);
+	throw Error(Peek(), msg);
 	//TODO: Implement error handling
 }
 
 
-bool Parser::Match(std::vector<Token::TokenType>* p_types)
+bool Parser::Match(std::vector<TokenType>* p_types)
 {
 	for(auto &type : *p_types)
 	{
@@ -142,7 +144,7 @@ bool Parser::Match(std::vector<Token::TokenType>* p_types)
 	return false;
 }
 
-bool Parser::Match(Token::TokenType p_type)
+bool Parser::Match(TokenType p_type)
 {
 	if (Check(p_type))
 	{
@@ -174,10 +176,10 @@ Token* Parser::Previous()
 
 bool Parser::IsAtEnd()
 {
-	return Peek()->type == Token::TokenType::TK_EOF;
+	return Peek()->type == TokenType::TK_EOF;
 }
 
-bool Parser::Check(Token::TokenType p_type)
+bool Parser::Check(TokenType p_type)
 {
 	if (IsAtEnd())
 	{
@@ -185,4 +187,10 @@ bool Parser::Check(Token::TokenType p_type)
 	}
 
 	return Peek()->type == p_type;
+}
+
+ParserError Parser::Error(Token* err, std::string msg)
+{
+	Error::Push(err, msg);
+	return ParserError();
 }

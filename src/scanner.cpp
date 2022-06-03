@@ -1,6 +1,5 @@
 #include "scanner.h"
 
-
 using namespace GDPP;
 
 void Scanner::ReadFile(const char* path)
@@ -37,7 +36,8 @@ std::vector<Token> Scanner::ScanTokens()
         ScanToken();
     }
 
-    tokens.push_back(Token(Token::TokenType::TK_EOF, "", "", line, indentLevel));
+    // tokens.push_back(Token(TokenType::TK_EOF, "", "", line, indentLevel));
+	AddToken(TokenType::TK_EOF);
     return tokens;
 
 
@@ -49,24 +49,24 @@ void Scanner::ScanToken()
 
     switch (c)
     {
-        case L'#': while(Peek() != '\n' && !IsAtEnd()) Advance();
+        case L'#': while(Peek() != '\n' && !IsAtEnd()) Advance(); break;
 
         case L'"' : EatStringLiteral(); break;
 
-        case L'(': AddToken(Token::TokenType::LEFT_PAREN); break;
-        case L')': AddToken(Token::TokenType::RIGHT_PAREN); break;
-        case L',': AddToken(Token::TokenType::COMMA); break;
-        case L'.': AddToken(Token::TokenType::DOT); break;
-        case L'+': AddToken(Token::TokenType::PLUS); break;
-        case L'/': AddToken(Token::TokenType::SLASH_FORWARD); break;
-        case L'*': AddToken(Token::TokenType::STAR); break;
-        case L':': AddToken(Token::TokenType::COLON); break;
+        case L'(': AddToken(TokenType::LEFT_PAREN); break;
+        case L')': AddToken(TokenType::RIGHT_PAREN); break;
+        case L',': AddToken(TokenType::COMMA); break;
+        case L'.': AddToken(TokenType::DOT); break;
+        case L'+': AddToken(TokenType::PLUS); break;
+        case L'/': AddToken(TokenType::SLASH_FORWARD); break;
+        case L'*': AddToken(TokenType::STAR); break;
+        case L':': AddToken(TokenType::COLON); break;
 
-        case L'!': AddToken(Match(L'=')? Token::TokenType::BANG_EQUAL : Token::TokenType::BANG); break;
-        case L'=': AddToken(Match(L'=')? Token::TokenType::EQUAL_EQUAL : Token::TokenType::EQUAL); break;
-        case L'<': AddToken(Match(L'=')? Token::TokenType::LESS_EQUAL : Token::TokenType::LESS); break;
-        case L'>': AddToken(Match(L'=')? Token::TokenType::GREATER_EQUAL : Token::TokenType::GREATER); break;
-        case L'-': AddToken(Match(L'>')? Token::TokenType::FORWARD_ARROW : Token::TokenType::MINUS); break;
+        case L'!': AddToken(Match(L'=')? TokenType::BANG_EQUAL : TokenType::BANG); break;
+        case L'=': AddToken(Match(L'=')? TokenType::EQUAL_EQUAL : TokenType::EQUAL); break;
+        case L'<': AddToken(Match(L'=')? TokenType::LESS_EQUAL : TokenType::LESS); break;
+        case L'>': AddToken(Match(L'=')? TokenType::GREATER_EQUAL : TokenType::GREATER); break;
+        case L'-': AddToken(Match(L'>')? TokenType::FORWARD_ARROW : TokenType::MINUS); break;
 
         case ' ':
         case '\r':
@@ -98,12 +98,12 @@ char Scanner::Advance()
     return sourceCode.at(current++);
 }
 
-void Scanner::AddToken(Token::TokenType p_type)
+void Scanner::AddToken(TokenType p_type)
 {
     AddToken(p_type, "");
 }
 
-void Scanner::AddToken(Token::TokenType p_type, std::string p_literal)
+void Scanner::AddToken(TokenType p_type, std::string p_literal)
 {
     std::string text = Substr(&sourceCode, start, current);
     Token t = Token(p_type, text, p_literal, line, indentLevel);
@@ -159,7 +159,7 @@ void Scanner::EatStringLiteral()
 
     std::string value = Substr(&sourceCode, start + 1, current - 1 );
 
-    AddToken(Token::TokenType::STRING,value);
+    AddToken(TokenType::STRING,value);
 }
 
 void Scanner::EatNumber()
@@ -174,7 +174,7 @@ void Scanner::EatNumber()
         while (IsDigit(Peek())) Advance();
     }
 
-    AddToken(Token::TokenType::NUMBER,Substr(&sourceCode, start,current));
+    AddToken(TokenType::NUMBER,Substr(&sourceCode, start,current));
 }
 
 void Scanner::EatIdentifier()
@@ -189,7 +189,7 @@ void Scanner::EatIdentifier()
     }
     else
     {
-        AddToken(Token::TokenType::IDENTIFIER,text);
+        AddToken(TokenType::IDENTIFIER,text);
     }
 }
 
@@ -213,20 +213,20 @@ bool Scanner::IsAlphaNumeric(char c)
 Scanner::Scanner()
 {
     keywords.clear();
-    keywords["and"] = Token::TokenType::AND;
-    keywords["class"] = Token::TokenType::CLASS;
-    keywords["else"] = Token::TokenType::ELSE;
-    keywords["false"] = Token::TokenType::FALSE;
-    keywords["true"] = Token::TokenType::TRUE;
-    keywords["for"] = Token::TokenType::FOR;
-    keywords["func"] = Token::TokenType::FUNC;
-    keywords["if"] = Token::TokenType::IF;
-    keywords["or"] = Token::TokenType::OR;
-    keywords["print"] = Token::TokenType::PRINT;
-    keywords["return"] = Token::TokenType::RETURN;
-    keywords["var"] = Token::TokenType::VAR;
-    keywords["while"] = Token::TokenType::WHILE;
-    keywords["void"] = Token::TokenType::VOID;
+    keywords["and"] = TokenType::AND;
+    keywords["class"] = TokenType::CLASS;
+    keywords["else"] = TokenType::ELSE;
+    keywords["false"] = TokenType::FALSE;
+    keywords["true"] = TokenType::TRUE;
+    keywords["for"] = TokenType::FOR;
+    keywords["func"] = TokenType::FUNC;
+    keywords["if"] = TokenType::IF;
+    keywords["or"] = TokenType::OR;
+    keywords["print"] = TokenType::PRINT;
+    keywords["return"] = TokenType::RETURN;
+    keywords["var"] = TokenType::VAR;
+    keywords["while"] = TokenType::WHILE;
+    keywords["void"] = TokenType::VOID;
 
 }
 
@@ -236,11 +236,11 @@ std::string Scanner::Substr(std::string* p_str, int p_beginIndex, int p_endIndex
     std::string result = "";
 
     if (p_beginIndex < 0) {throw std::range_error("p_beginIndex");}
-    if (p_endIndex > p_str->size()) {throw std::range_error("p_endIndex");}
+    if (p_endIndex > static_cast<int>(p_str->size()) ) {throw std::range_error("p_endIndex");}
     int subLen = p_endIndex - p_beginIndex;
     if (subLen < 0) {throw std::out_of_range("subLen is less than zero");}
     
-    result = ( (p_beginIndex == 0) && (p_endIndex == p_str->size()) ) ? *p_str : std::string(*p_str,p_beginIndex,subLen);
+    result = ( (p_beginIndex == 0) && (p_endIndex == static_cast<int>( p_str->size() ) ) ) ? *p_str : std::string(*p_str,p_beginIndex,subLen);
 
     return result;
 }
