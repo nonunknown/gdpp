@@ -1,8 +1,9 @@
-#ifndef EXPR_H
-#define EXPR_H
-
 #include <vector>
 #include "token.h"
+#include <iostream>
+
+#ifndef EXPR_H
+#define EXPR_H
 
 namespace GDPP
 {
@@ -34,21 +35,31 @@ namespace GDPP
             virtual void Visit(Unary&) = 0;
             virtual void Visit(Variable&) = 0;
 
+			
             virtual void Visit(Literal<int>&) = 0;
             virtual void Visit(Literal<float>&) = 0;
             virtual void Visit(Literal<std::string>&) = 0;
 			virtual void Visit(Literal<bool>&) = 0;
 
+			virtual void Visit(void*) = 0; //this was created to allow return pure Expression, -> Look at Expression's Accept function
+
+
     };
 
 	struct ExpressionVisitor
 	{
-		virtual void Accept(Visitor& visitor) = 0;
+		virtual void Accept(Visitor&) = 0;
 	};
 
-    struct Expression
+    struct Expression : ExpressionVisitor
     {
-        ExpressionVisitor* visitor;
+		public:
+			Expression()
+			{
+				std::cout << "instanced" << std::endl;
+			}
+			void Accept(Visitor& visitor) { visitor.Visit(nullptr); }
+
     };
 
     struct Assign : Expression
@@ -57,7 +68,7 @@ namespace GDPP
             Token* name;
             Expression* value;
             Assign(Token* p_name, Expression* p_value);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
     };
 
     struct Binary : Expression
@@ -67,7 +78,7 @@ namespace GDPP
             Expression* right;
             Token* opt;
             Binary(Expression* p_left, Token* p_opt, Expression* p_right);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -78,7 +89,7 @@ namespace GDPP
             Token* parent;
             std::vector<Expression*> args;
             Call(Expression* p_calle, Token* p_parent, std::vector<Expression*> p_args);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -88,7 +99,7 @@ namespace GDPP
             Expression* object;
             Token* name;
             Get(Expression* p_object, Token* p_name);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -97,7 +108,7 @@ namespace GDPP
         public:
             Expression* expression;
             Grouping(Expression* p_expression);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
     
@@ -110,7 +121,8 @@ namespace GDPP
 			{
 				value = p_value;
 			}
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+			
 
     };
 
@@ -120,7 +132,7 @@ namespace GDPP
             Expression* left, *right;
             Token* op;
             Logical(Expression* p_left, Token* p_op, Expression* p_right);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -130,7 +142,7 @@ namespace GDPP
             Expression* object, *value;
             Token* name;
             Set(Expression* p_object, Token* p_name, Expression* p_value);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -139,7 +151,7 @@ namespace GDPP
         public:
             Token* keyword;
             Self(Token* p_keyword);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -149,7 +161,7 @@ namespace GDPP
             Token* token;
             Expression* right;
             Unary(Token* p_token, Expression* p_right);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 
@@ -158,7 +170,7 @@ namespace GDPP
         public:
             Token* name;
             Variable(Token* p_name);
-            // void Accept(Visitor& visitor) final { visitor.Visit(*this); }
+            void Accept(Visitor& visitor) final { visitor.Visit(*this); }
 
     };
 

@@ -1,8 +1,8 @@
-#ifndef TYPES_H
-#define TYPES_H
-
 #include <variant>
 #include <string>
+
+#ifndef TYPES_H
+#define TYPES_H
 
 namespace GDPP
 {

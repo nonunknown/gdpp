@@ -1,6 +1,3 @@
-#ifndef SCAN_H
-#define SCAN_H
-
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -8,6 +5,13 @@
 #include <stdexcept>
 #include "token.h"
 #include "error.h"
+
+#ifndef SCAN_H
+#define SCAN_H
+
+// .4
+// 4f
+// .4f
 
 namespace GDPP // means GDScript Plus Plus
 {

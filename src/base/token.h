@@ -1,17 +1,17 @@
-#ifndef TOKEN_H
-#define TOKEN_H
-
 #include <string>
 #include <vector>
 #include <any>
 #include <string>
+
+#ifndef TOKEN_H
+#define TOKEN_H
 
 namespace GDPP
 {
 
 	enum TokenType {
 		// Single-character tokens.
-		LEFT_PAREN, RIGHT_PAREN,
+		LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
 		COMMA, DOT, MINUS, PLUS, SLASH_FORWARD, STAR, HASHTAG, COLON,
 
 		// One or two character tokens.
@@ -21,18 +21,18 @@ namespace GDPP
 		LESS, LESS_EQUAL, FORWARD_ARROW,
 
 		// Literals.
-		IDENTIFIER, STRING, NUMBER,
+		IDENTIFIER, STRING, FLOAT, INT,
 
 		// Keywords.
 		AND, CLASS, ELSE, FALSE, FUNC, FOR, IF, OR,
 		PRINT, RETURN, TRUE, VAR, WHILE, VOID,
 
-		TK_EOF
+		TK_ERROR, TK_EOF
 		};
 
-	const char* const TOKEN_NAMES[37] = { 
+	const char* const TOKEN_NAMES[42] = { 
 		// Single-character tokens.
-		"LEFT_PAREN", "RIGHT_PAREN",
+		"LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRANCE", "RIGHT_BRACE",
 		"COMMA", "DOT", "MINUS", "PLUS", "SLASH_FORWARD", "STAR", "HASHTAG", "COLON",
 
 		// One or two character tokens.
@@ -42,13 +42,13 @@ namespace GDPP
 		"LESS", "LESS_EQUAL", "FORWARD_ARROW",
 
 		// Literals.
-		"IDENTIFIER", "STRING", "NUMBER",
+		"IDENTIFIER", "STRING", "FLOAT", "INT",
 
 		// Keywords.
 		"AND", "CLASS", "ELSE", "FALSE", "FUNC", "FOR", "IF", "OR",
 		"PRINT", "RETURN", "TRUE", "VAR", "WHILE", "VOID",
 
-		"TK_EOF"
+		"TK_ERROR", "TK_EOF"
 		};
 	
     class Token

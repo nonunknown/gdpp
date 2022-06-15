@@ -56,7 +56,6 @@ void Scanner::ScanToken()
         case L'(': AddToken(TokenType::LEFT_PAREN); break;
         case L')': AddToken(TokenType::RIGHT_PAREN); break;
         case L',': AddToken(TokenType::COMMA); break;
-        case L'.': AddToken(TokenType::DOT); break;
         case L'+': AddToken(TokenType::PLUS); break;
         case L'/': AddToken(TokenType::SLASH_FORWARD); break;
         case L'*': AddToken(TokenType::STAR); break;
@@ -67,6 +66,13 @@ void Scanner::ScanToken()
         case L'<': AddToken(Match(L'=')? TokenType::LESS_EQUAL : TokenType::LESS); break;
         case L'>': AddToken(Match(L'=')? TokenType::GREATER_EQUAL : TokenType::GREATER); break;
         case L'-': AddToken(Match(L'>')? TokenType::FORWARD_ARROW : TokenType::MINUS); break;
+
+		case L'.': 
+			if (IsDigit(PeekNext()))
+				EatNumber();
+			else
+				AddToken(TokenType::DOT);
+			break;
 
         case ' ':
         case '\r':
@@ -164,6 +170,8 @@ void Scanner::EatStringLiteral()
 
 void Scanner::EatNumber()
 {
+	bool isFloat = false;
+
     while(IsDigit(Peek())) { Advance(); }
 
     //Look for fractions
@@ -171,10 +179,11 @@ void Scanner::EatNumber()
     {
         //Consume the '.'
         Advance();
+		isFloat = true;
         while (IsDigit(Peek())) Advance();
     }
 
-    AddToken(TokenType::NUMBER,Substr(&sourceCode, start,current));
+    AddToken( (isFloat)?TokenType::FLOAT:TokenType::INT ,Substr(&sourceCode, start,current));
 }
 
 void Scanner::EatIdentifier()

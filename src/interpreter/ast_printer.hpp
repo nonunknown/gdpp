@@ -1,8 +1,8 @@
+#include "../base/expression.h"
+#include <string>
+
 #ifndef ASTPRINTER_H
 #define ASTPRINTER_H
-
-#include "expression.h"
-#include <string>
 
 namespace GDPP
 {
@@ -23,27 +23,29 @@ namespace GDPP
 				void Visit(Unary&){ name = "Unary"; };
 				void Visit(Variable&){ name = "Variable"; };
 
-				void Visit(Literal<int>& literal){ name = std::to_string( literal.value ); };
-				void Visit(Literal<float>& literal){ name = std::to_string( literal.value ); };
-				void Visit(Literal<std::string>& literal){ name = literal.value; };
-				void Visit(Literal<bool>& literal){ name = std::to_string( literal.value ); };
+				virtual void Visit(Literal<int>&) { name = "Variable"; };
+				virtual void Visit(Literal<float>&) { name = "Variable"; };
+				virtual void Visit(Literal<std::string>&) { name = "Variable"; };
+				virtual void Visit(Literal<bool>&) { name = "Variable"; };
 
-
+				void Visit(void*) {}
 
 				std::string name;
 			};
-			PrintVisitor printVisitor;
+			PrintVisitor printer;
 
 		public:
 			ASTPrinter()
 			{
-				
+				printer = PrintVisitor();
+
 			};
 
 			std::string print(Expression* expression)
 			{
-				expression->visitor->Accept(printVisitor);
-				return printVisitor.name;
+				expression->Accept(printer);
+				return printer.name;
+				
 			}
 	};
 }

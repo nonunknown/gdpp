@@ -2,7 +2,7 @@
 
 using namespace GDPP;
 
-Parser::Parser(std::vector<Token*> p_tokens)
+Parser::Parser(std::vector<Token>* p_tokens)
 {
 	current = 0;
 	tokens = p_tokens;
@@ -96,7 +96,7 @@ Expression Parser::Primary()
 		return Literal(true);
 	}
 
-	std::vector<TokenType> types = {TokenType::NUMBER, TokenType::STRING};
+	std::vector<TokenType> types = {TokenType::INT, TokenType::FLOAT, TokenType::STRING};
 
 	if (Match(&types))
 	{
@@ -110,9 +110,8 @@ Expression Parser::Primary()
 		return Grouping(&expr);
 	}
 
-	std::cout << "Error on Primary(): End of function reached" << std::endl; 
-	exit(-1);
-
+	Error::Push(Peek(), "Expected expression");
+	return Expr();
 }
 
 Expression Parser::Expr()
@@ -166,12 +165,12 @@ Token* Parser::Advance()
 
 Token* Parser::Peek()
 {
-	return tokens[current];
+	return &tokens->at(current);
 }
 
 Token* Parser::Previous()
 {
-	return tokens[current-1];
+	return &tokens->at(current-1);
 }
 
 bool Parser::IsAtEnd()
@@ -192,5 +191,43 @@ bool Parser::Check(TokenType p_type)
 ParserError Parser::Error(Token* err, std::string msg)
 {
 	Error::Push(err, msg);
-	return ParserError();
+	return ParserError(msg);
+}
+
+void Parser::Synchronize()
+{
+	Advance();
+
+	while (!IsAtEnd())
+	{
+		// if (Previous()->type == TokenType::)
+		switch(Peek()->type)
+		{
+			case CLASS:
+			case FUNC:
+			case VAR:
+			case FOR:
+			case IF:
+			case WHILE:
+			case PRINT:
+			case RETURN:
+				return;
+		}
+
+		Advance();
+	}
+}
+
+Expression Parser::Parse()
+{
+	try
+	{
+		return Expr();
+	}
+	catch(const ParserError& e)
+	{
+		std::cerr << "error parsing" << '\n';
+		return Expression();
+	}
+	
 }

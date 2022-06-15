@@ -1,9 +1,9 @@
-#ifndef ERROR_H
-#define ERROR_H
-
 #include <string>
 #include <iostream>
 #include "token.h"
+
+#ifndef ERROR_H
+#define ERROR_H
 
 namespace GDPP
 {
@@ -21,7 +21,11 @@ namespace GDPP
 	class ParserError
 	{
 		public:
-			ParserError() {}
+			ParserError(const std::string arg)
+			{
+				std::cout << "ParserError:" << arg << std::endl;
+			}
+
 	};
 }
 #endif
