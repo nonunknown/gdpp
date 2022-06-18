@@ -5,6 +5,8 @@
 #include "bytecode/chunk.h"
 #include "bytecode/debug.h"
 #include "bytecode/vm.h"
+#include "bytecode/scanner.h"
+
 #include <fstream>
 #include <string>
 
@@ -49,28 +51,19 @@ int main()
 
 	readFile("scripts/example.gdpp");
 	std::cout << sourceCode << std::endl;
+
+	// const char* t = "test";
+
+	vm.interpret(&sourceCode);
 	
-	// Chunk c = Chunk();
-
-	// #define WRITE_CONST(name, num) \
-	// 	int name = c.addConstant(num); \
-	// 	c.write(OpCode::OP_CONSTANT, 1); \
-	// 	c.write(name, 1); 
+	// std::cout << (char)t[0] + (char)t[1] << std::endl;
+	// for (auto &&i : KEYWORDS)
+	// {
+	// 	KeywordData d = KeywordData(std::get<0>(i),std::get<1>(i));
+	// 	d.toString();
+	// }
 	
-	// #define WRITE_NEG(num) \
-	// 	WRITE_CONST(num) \
-	// 	c.write(OpCode::OP_NEGATE, 1);
-
-	// WRITE_CONST(a, 10);
-	// WRITE_CONST(d, 40);
-	// c.write(OpCode::OP_SUB, 1);
-
-
-	// c.write(OpCode::OP_RETURN, 1);
-
-	// vm.interpret(&c);
-
-	// #undef ADD_CONST
-	// #undef WRITE_NEG
+	
+	
 	return 0;
 }

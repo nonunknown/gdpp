@@ -4,6 +4,7 @@
 #include "chunk.h"
 #include "value.h"
 #include "compiler.h"
+#include "debug.h"
 
 namespace GDPP
 {

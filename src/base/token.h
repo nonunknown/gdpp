@@ -12,7 +12,7 @@ namespace GDPP
 	enum TokenType {
 		// Single-character tokens.
 		LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-		COMMA, DOT, MINUS, PLUS, SLASH_FORWARD, STAR, HASHTAG, COLON,
+		COMMA, DOT, MINUS, PLUS, SLASH_FORWARD, STAR, HASHTAG, COLON, SEMI,
 
 		// One or two character tokens.
 		BANG, BANG_EQUAL,
@@ -24,16 +24,21 @@ namespace GDPP
 		IDENTIFIER, STRING, FLOAT, INT,
 
 		// Keywords.
-		AND, CLASS, ELSE, FALSE, FUNC, FOR, IF, OR,
+		AND, IN, NOT, AS, CLASS, EXTENDS, IS,
+		SIGNAL, AWAIT, CONST, ENUM, STATIC, ELIF, MATCH,
+		 ELSE, FALSE, FUNC, FOR, IF, OR,
 		PRINT, RETURN, TRUE, VAR, WHILE, VOID,
 
-		TK_ERROR, TK_EOF
+		PI, TAU, INF, NAN, SELF, BREAKPOINT, TOOL, SUPER,
+		BREAK, CONTINUE, PASS, ASSERT, PRELOAD,
+
+		NIL, TK_ERROR, TK_EOF
 		};
 
-	const char* const TOKEN_NAMES[42] = { 
+	const char* const TOKEN_NAMES[68] = { 
 		// Single-character tokens.
-		"LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRANCE", "RIGHT_BRACE",
-		"COMMA", "DOT", "MINUS", "PLUS", "SLASH_FORWARD", "STAR", "HASHTAG", "COLON",
+		"LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
+		"COMMA", "DOT", "MINUS", "PLUS", "SLASH_FORWARD", "STAR", "HASHTAG", "COLON", "SEMI",
 
 		// One or two character tokens.
 		"BANG", "BANG_EQUAL",
@@ -45,10 +50,15 @@ namespace GDPP
 		"IDENTIFIER", "STRING", "FLOAT", "INT",
 
 		// Keywords.
-		"AND", "CLASS", "ELSE", "FALSE", "FUNC", "FOR", "IF", "OR",
+		"AND", "IN", "NOT", "AS", "CLASS", "EXTENDS", "IS",
+		"SIGNAL", "AWAIT", "CONST", "ENUM", "STATIC", "ELIF", "MATCH",
+		 "ELSE", "FALSE", "FUNC", "FOR", "IF", "OR",
 		"PRINT", "RETURN", "TRUE", "VAR", "WHILE", "VOID",
 
-		"TK_ERROR", "TK_EOF"
+		"PI", "TAU", "INF", "NAN", "SELF", "BREAKPOINT", "TOOL", "SUPER",
+		"BREAK", "CONTINUE", "PASS", "ASSERT", "PRELOAD",
+
+		"NIL", "TK_ERROR", "TK_EOF"
 		};
 	
     class Token

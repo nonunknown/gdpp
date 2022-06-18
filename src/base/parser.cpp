@@ -201,18 +201,18 @@ void Parser::Synchronize()
 	while (!IsAtEnd())
 	{
 		// if (Previous()->type == TokenType::)
-		switch(Peek()->type)
-		{
-			case CLASS:
-			case FUNC:
-			case VAR:
-			case FOR:
-			case IF:
-			case WHILE:
-			case PRINT:
-			case RETURN:
-				return;
-		}
+		// switch(Peek()->tyclpe)
+		// {
+		// 	case CLASS:
+		// 	case FUNC:
+		// 	case VAR:
+		// 	case FOR:
+		// 	case IF:
+		// 	case WHILE:
+		// 	case PRINT:
+		// 	case RETURN:
+		// 		return;
+		// }
 
 		Advance();
 	}

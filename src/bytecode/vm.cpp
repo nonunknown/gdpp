@@ -1,6 +1,5 @@
 #include "vm.h"
-#include "debug.h"
-#include "value.h"
+
 
 using namespace GDPP;
 
@@ -16,13 +15,23 @@ VM::~VM()
 
 InterpretResult VM::interpret(std::string* p_src)
 {
+	Chunk c = Chunk();
 	src = p_src;
-	compile();
-	return INTERPRET_OK;
-	// chunk = p_chunk;
-	// ip = chunk->code;
 
-	// return run();
+	if (!Compiler::compile(p_src, &c))
+	{
+		//TODO: free chunk
+		return INTERPRET_COMPILE_ERROR;
+	}
+
+	chunk = &c;
+	ip = chunk->code;
+
+
+	InterpretResult result = run();
+
+	//TODO: ? free chunk
+	return result;
 }
 
 InterpretResult VM::run()

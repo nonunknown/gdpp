@@ -7,7 +7,7 @@
 namespace GDPP
 {
 	#define DEBUG_TRACE_EXECUTION
-
+	#define DEBUG_PRINT_CODE
 	
 	typedef enum {
 		OP_CONSTANT,
@@ -33,6 +33,10 @@ namespace GDPP
 
 		"MAX"
 	};
+
+	
+
+	
 
 } // namespace GDPP
 

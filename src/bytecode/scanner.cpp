@@ -6,14 +6,16 @@ Scanner::Scanner(std::string* p_src)
 {
 	src = p_src;
 	data = Data();
-	data.start = &src->at(0);
-	data.current = &src->at(0);
+	data.numStart = data.numCurrent = 0;
+	data.start = &src->at(data.numStart);
+	data.current = &src->at(data.numCurrent);
 	data.line = 1;
 	data.tabLevel = 0;
 }
 
 char Scanner::advance()
 {
+	data.numCurrent++;
 	data.current++;
 	return data.current[-1];
 }
@@ -22,6 +24,7 @@ bool Scanner::match(char expected)
 {
 	if ( isAtEnd() ) return false;
 	if ( *data.current != expected ) return false;
+	data.numCurrent++;
 	data.current++;
 	return true;
 }
@@ -68,6 +71,7 @@ BToken Scanner::scanToken()
 {
 	skipWhitespace();
 	data.start = data.current;
+	data.numStart = data.numCurrent;
 	if (isAtEnd()) return makeToken(TK_EOF);
 	char c = advance();
 	if ( isalpha(c) ) return identifier();
@@ -141,7 +145,26 @@ BToken Scanner::number()
 BToken Scanner::identifier()
 {
 	while( isalnum(peek()) ) advance();
+
+	std::string target = src->substr(data.numStart,data.numCurrent-data.numStart);
+	std::cout << "trying to find identifier: " << target << std::endl;
+	const auto it = keywordMap.find(target.c_str());
+	if (it != keywordMap.end())
+		std::cout << "found key: " << TOKEN_NAMES[it->second] << std::endl;
+		return makeToken(it->second);
+
 	return makeToken(IDENTIFIER);
+}
+
+TokenType Scanner::checkKeyword(int start, int length, const char* rest, TokenType type)
+{
+	if (data.current - data.start == start + length &&
+		memcmp(data.start + start, rest, length) == 0)
+		{
+			return type;
+		}
+
+	return IDENTIFIER;
 }
 
 BToken Scanner::makeToken(TokenType t)
