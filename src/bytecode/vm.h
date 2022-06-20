@@ -21,6 +21,7 @@ namespace GDPP
 	{
 		private:
 			Chunk* chunk;
+			Compiler compiler;
 			Value stack[STACK_MAX];
 			Value* stackTop;
 			uint8_t* ip;

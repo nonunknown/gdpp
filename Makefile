@@ -17,7 +17,7 @@ all: $(BIN)/$(EXECUTABLE)
 
 run: clean all
 	clear
-	# ./$(BIN)/$(EXECUTABLE)
+	./$(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(BASE)/*.cpp $(BYTECODE)/*.cpp #$(INTERPRETER)/*.cpp
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)

@@ -5,6 +5,7 @@ using namespace GDPP;
 
 VM::VM()
 {
+	compiler = Compiler();
 	resetStack();
 }
 
@@ -18,7 +19,7 @@ InterpretResult VM::interpret(std::string* p_src)
 	Chunk c = Chunk();
 	src = p_src;
 
-	if (!Compiler::compile(p_src, &c))
+	if (!compiler.compile(p_src, &c))
 	{
 		//TODO: free chunk
 		return INTERPRET_COMPILE_ERROR;

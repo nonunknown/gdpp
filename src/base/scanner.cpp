@@ -219,25 +219,25 @@ bool Scanner::IsAlphaNumeric(char c)
     return isalnum(c);
 }
 
-Scanner::Scanner()
-{
-    keywords.clear();
-    keywords["and"] = TokenType::AND;
-    keywords["class"] = TokenType::CLASS;
-    keywords["else"] = TokenType::ELSE;
-    keywords["false"] = TokenType::FALSE;
-    keywords["true"] = TokenType::TRUE;
-    keywords["for"] = TokenType::FOR;
-    keywords["func"] = TokenType::FUNC;
-    keywords["if"] = TokenType::IF;
-    keywords["or"] = TokenType::OR;
-    keywords["print"] = TokenType::PRINT;
-    keywords["return"] = TokenType::RETURN;
-    keywords["var"] = TokenType::VAR;
-    keywords["while"] = TokenType::WHILE;
-    keywords["void"] = TokenType::VOID;
+// Scanner::Scanner()
+// {
+//     keywords.clear();
+//     keywords["and"] = TokenType::AND;
+//     keywords["class"] = TokenType::CLASS;
+//     keywords["else"] = TokenType::ELSE;
+//     keywords["false"] = TokenType::FALSE;
+//     keywords["true"] = TokenType::TRUE;
+//     keywords["for"] = TokenType::FOR;
+//     keywords["func"] = TokenType::FUNC;
+//     keywords["if"] = TokenType::IF;
+//     keywords["or"] = TokenType::OR;
+//     keywords["print"] = TokenType::PRINT;
+//     keywords["return"] = TokenType::RETURN;
+//     keywords["var"] = TokenType::VAR;
+//     keywords["while"] = TokenType::WHILE;
+//     keywords["void"] = TokenType::VOID;
 
-}
+// }
 
 
 std::string Scanner::Substr(std::string* p_str, int p_beginIndex, int p_endIndex)

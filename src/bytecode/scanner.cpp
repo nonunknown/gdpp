@@ -2,7 +2,17 @@
 
 using namespace GDPP;
 
-Scanner::Scanner(std::string* p_src)
+Scanner::Scanner()
+{
+}
+
+
+Scanner::~Scanner()
+{
+	
+}
+
+void Scanner::start(std::string* p_src)
 {
 	src = p_src;
 	data = Data();
@@ -148,10 +158,14 @@ BToken Scanner::identifier()
 
 	std::string target = src->substr(data.numStart,data.numCurrent-data.numStart);
 	std::cout << "trying to find identifier: " << target << std::endl;
+	
 	const auto it = keywordMap.find(target.c_str());
+
 	if (it != keywordMap.end())
+	{
 		std::cout << "found key: " << TOKEN_NAMES[it->second] << std::endl;
 		return makeToken(it->second);
+	}
 
 	return makeToken(IDENTIFIER);
 }

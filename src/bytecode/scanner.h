@@ -28,27 +28,6 @@ namespace GDPP
 		int line;
 	};
 
-	// struct KeywordData
-	// {
-	// 	public:
-	// 		int start;
-	// 		int length;
-	// 		const char* rest;
-	// 		TokenType type;
-	// 		KeywordData(const char* p_keyword, TokenType p_type, int p_start=1)
-	// 		{
-	// 			start = p_start;
-	// 			length = strlen(p_keyword) - 1;
-	// 			rest = p_keyword + 1;
-	// 			type = p_type;
-	// 		}
-
-	// 		void toString()
-	// 		{
-	// 			std::cout << "{ start: " << start << ", length: " << length << ", rest: " << rest << ", tokenType: " << TOKEN_NAMES[type] << " }" << std::endl;
-	// 		}
-	// };
-
 
 	const std::map<const char*, TokenType> keywordMap = {
 		{"and",			AND},
@@ -94,11 +73,12 @@ namespace GDPP
 	class Scanner
 	{
 		private:
-			// std::map<char,KeywordData> keywordMap;
 			std::string* src;
 			Data data;
 		public:
-			Scanner(std::string* src);
+			Scanner();
+			~Scanner();
+			void start(std::string* p_src);
 			BToken scanToken();
 			BToken errorToken(std::string* message);
 			BToken makeToken(TokenType t);

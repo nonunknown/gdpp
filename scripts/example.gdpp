@@ -1,3 +1,1 @@
-#func main(s:string, n:int) -> void:
-#	print("Hello World")
-(-1 + 2) * 3 - -4
+"hello world"

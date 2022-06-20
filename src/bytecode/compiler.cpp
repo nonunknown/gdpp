@@ -3,9 +3,15 @@
 
 using namespace GDPP;
 
+Compiler::Compiler()
+{
+
+}
+
 bool Compiler::compile(std::string* p_src, Chunk* p_chunk)
 {
-	scanner = Scanner(p_src);
+	scanner = Scanner();
+	scanner.start(p_src);
 	parser = Parser();
 	parser.hadError = false;
 	parser.panicMode = false;
@@ -17,9 +23,14 @@ bool Compiler::compile(std::string* p_src, Chunk* p_chunk)
 	return !parser.hadError;
 }
 
-ParseRule* Compiler::getRule(TokenType p_type)
+const ParseRule* Compiler::getRule(TokenType p_type)
 {
-	return &parseRules[p_type];
+	const auto it = parseRule.find(p_type);
+	if (it != parseRule.end())
+	{
+		return &(it->second);
+	}
+	return nullptr; //unreachable
 }
 
 
@@ -33,13 +44,13 @@ void Compiler::parsePrecedence(Precendence precedence)
 		return;
 	}
 
-	prefixRule();
+	prefixRule(this);
 
-	while ( precedence <= getRule(parser.current.type)->precedence )
+	while ( precedence <= getRule(parser.current.type)->precendence )
 	{
 		advance();
 		ParseFn infixRule = getRule(parser.previous.type)->infix;
-		infixRule();
+		infixRule(this);
 	}
 }
 
@@ -48,34 +59,34 @@ void Compiler::expression()
 	parsePrecedence(PREC_ASSIGNMENT);
 }
 
-void Compiler::unary()
+void Compiler::unary(Compiler* comp)
 {
-	TokenType operatorType = parser.previous.type;
+	TokenType operatorType = comp->parser.previous.type;
 
 	//compile the operand;
-	expression();
+	comp->expression();
 
-	parsePrecedence(PREC_UNARY);
+	comp->parsePrecedence(PREC_UNARY);
 
 	switch(operatorType)
 	{
-		case MINUS: emitByte(OP_NEGATE); break;
+		case MINUS: comp->emitByte(OP_NEGATE); break;
 		default: return;
 	}
 }
 
-void Compiler::binary()
+void Compiler::binary(Compiler* comp)
 {
-	TokenType operatorType = parser.previous.type;
+	TokenType operatorType = comp->parser.previous.type;
 
-	ParseRule* rule = getRule(operatorType);
-	parsePrecedence((Precendence)(rule->precedence + 1));
+	const ParseRule* rule = comp->getRule(operatorType);
+	comp->parsePrecedence((Precendence)(rule->precendence + 1));
 	switch(operatorType)
 	{
-		case PLUS:				emitByte(OP_ADD); break;
-		case MINUS:				emitByte(OP_SUB); break;
-		case STAR:				emitByte(OP_MUL); break;
-		case SLASH_FORWARD:		emitByte(OP_DIV); break;
+		case PLUS:				comp->emitByte(OP_ADD); break;
+		case MINUS:				comp->emitByte(OP_SUB); break;
+		case STAR:				comp->emitByte(OP_MUL); break;
+		case SLASH_FORWARD:		comp->emitByte(OP_DIV); break;
 		default: return;
 	}
 }
@@ -97,16 +108,16 @@ void Compiler::emitConstant(int value)
 	emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
-void Compiler::number()
+void Compiler::number(Compiler* comp)
 {
-	int value = (int)(parser.previous.start);
-	emitConstant(value);
+	int value = atoi(comp->parser.previous.start);
+	comp->emitConstant(value);
 }
 
-void Compiler::grouping()
+void Compiler::grouping(Compiler* comp)
 {
-	expression();
-	consume(RIGHT_PAREN, "Expect ')' after expression.");
+	comp->expression();
+	comp->consume(RIGHT_PAREN, "Expect ')' after expression.");
 }
 
 Chunk* Compiler::currentChunk()
