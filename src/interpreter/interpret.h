@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../base/expression.h"
+#include "expression.h"
 
 #ifndef INTERPRET
 #define INTERPRET
