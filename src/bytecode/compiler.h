@@ -6,7 +6,7 @@
 #include "scanner.h"
 #include "common.h"
 #include "chunk.h"
-#include "../base/token.h"
+#include "token.h"
 #include <unordered_map>
 #include <functional>
 #include "value.h"

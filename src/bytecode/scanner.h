@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "common.h"
-#include "../base/token.h"
+#include "token.h"
 
 namespace GDPP
 {

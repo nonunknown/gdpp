@@ -13,7 +13,10 @@ static Obj* allocate_obj(size_t size, ObjType type)
 #define ALLOCATE_OBJ(type, obj_type) \
 	(type*)allocate_obj(sizeof(type), obj_type)
 
-
+static inline bool is_obj_type(Value value, ObjType type)
+{
+	return IS_OBJ(value) && AS_OBJ(value)->type == type;
+}
 
 ObjString* copy_str(const char* chars, int length)
 {
