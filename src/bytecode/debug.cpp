@@ -55,7 +55,21 @@ int Disassemble::fromInstruction(Chunk* chunk, int offset)
 			return simpleInstruction(OPCODES[OP_DIV], offset);
 		case OP_MUL:
 			return simpleInstruction(OPCODES[OP_MUL], offset);
-
+		case OP_NIL:
+			return simpleInstruction(OPCODES[OP_NIL], offset);
+		case OP_FALSE:
+			return simpleInstruction(OPCODES[OP_FALSE], offset);
+		case OP_TRUE:
+			return simpleInstruction(OPCODES[OP_TRUE], offset);
+		case OP_NOT:
+			return simpleInstruction(OPCODES[OP_NOT], offset);
+		case OP_EQUAL:
+      		return simpleInstruction(OPCODES[OP_EQUAL], offset);
+		case OP_GREATER:
+			return simpleInstruction(OPCODES[OP_GREATER], offset);
+		case OP_LESS:
+			return simpleInstruction(OPCODES[OP_LESS], offset);
+			
 		default:
 			std::cout << "Unknown opcode at: " << instruction;
 			return offset+1;

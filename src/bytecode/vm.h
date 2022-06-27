@@ -5,6 +5,8 @@
 #include "value.h"
 #include "compiler.h"
 #include "debug.h"
+#include "stack.hpp"
+#include <stdarg.h>
 
 namespace GDPP
 {
@@ -22,6 +24,7 @@ namespace GDPP
 		private:
 			Chunk* chunk;
 			Compiler compiler;
+			StackManager sm;
 			Value stack[STACK_MAX];
 			Value* stackTop;
 			uint8_t* ip;
@@ -34,6 +37,9 @@ namespace GDPP
 			void resetStack();
 			void push(Value value);
 			Value pop();
+			Value peek(int distance);
+			void runtime_error(const char* format, ...);
+			bool is_falsey(Value value);
 
 	};
 } // namespace GDPP

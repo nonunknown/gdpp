@@ -29,7 +29,7 @@ namespace GDPP
 	};
 
 
-	const std::map<const char*, TokenType> keywordMap = {
+	const std::map<const std::string, TokenType> keywordMap = {
 		{"and",			AND},
 		{"as",			AS},
 		{"assert",		ASSERT},
@@ -52,6 +52,7 @@ namespace GDPP
 		{"INF",			INF},
 		{"match",		MATCH},
 		{"NAN",			NAN},
+		{"null",		NIL},
 		{"or",			OR},
 		{"pass",		PASS},
 		{"PI",			PI},

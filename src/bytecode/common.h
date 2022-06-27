@@ -9,7 +9,8 @@ namespace GDPP
 	#define DEBUG_TRACE_EXECUTION
 	#define DEBUG_PRINT_CODE
 	
-	typedef enum {
+	enum OpCode 
+	{
 		OP_CONSTANT,
 		OP_NEGATE,
 		OP_ADD,
@@ -17,12 +18,19 @@ namespace GDPP
 		OP_DIV,
 		OP_MUL,
 		OP_RETURN,
-
+		OP_NIL,
+		OP_TRUE,
+		OP_FALSE,
+		OP_NOT,
+		OP_EQUAL,
+		OP_GREATER,
+		OP_LESS,
 
 		MAX,
-	} OpCode;
+	};
 
-	const char * const OPCODES[8] = {
+	const char * const OPCODES[15] = 
+	{
 		"OP_CONSTANT",
 		"OP_NEGATE",
 		"OP_ADD",
@@ -30,9 +38,22 @@ namespace GDPP
 		"OP_DIV",
 		"OP_MUL",
 		"OP_RETURN",
+		"OP_NIL",
+		"OP_TRUE",
+		"OP_FALSE",
+		"OP_NOT",
+		"OP_EQUAL",
+		"OP_GREATER",
+		"OP_LESS",
 
 		"MAX"
 	};
+
+
+
+
+
+
 
 	
 

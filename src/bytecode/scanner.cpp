@@ -158,16 +158,30 @@ BToken Scanner::identifier()
 
 	std::string target = src->substr(data.numStart,data.numCurrent-data.numStart);
 	std::cout << "trying to find identifier: " << target << std::endl;
-	
-	const auto it = keywordMap.find(target.c_str());
 
-	if (it != keywordMap.end())
+	// const auto it = keywordMap.find(target.c_str());
+
+	// if (it != keywordMap.end())
+	// {
+	// 	std::cout << "found key: " << TOKEN_NAMES[it->second] << std::endl;
+	// 	return makeToken(it->second);
+	// }
+
+	try
 	{
-		std::cout << "found key: " << TOKEN_NAMES[it->second] << std::endl;
-		return makeToken(it->second);
+		TokenType result;
+		result = keywordMap.at(target);
+		std::cout << "found identifier: " << TOKEN_NAMES[result] << std::endl;
+		return makeToken(result);
 	}
+	catch(const std::exception& e)
+	{
+		std::cout << "not a keyword, generating identifier: " << target << std::endl;
+		return makeToken(IDENTIFIER);
+	}
+	
 
-	return makeToken(IDENTIFIER);
+	return makeToken(IDENTIFIER); //unreachable;
 }
 
 TokenType Scanner::checkKeyword(int start, int length, const char* rest, TokenType type)

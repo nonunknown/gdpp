@@ -37,6 +37,7 @@ const ParseRule* Compiler::getRule(TokenType p_type)
 void Compiler::parsePrecedence(Precendence precedence)
 {
 	advance();
+
 	ParseFn prefixRule = getRule(parser.previous.type)->prefix;
 	if ( prefixRule == NULL )
 	{
@@ -70,6 +71,9 @@ void Compiler::unary(Compiler* comp)
 
 	switch(operatorType)
 	{
+		case NOT:
+		case BANG:
+			comp->emitByte(OP_NOT); break;
 		case MINUS: comp->emitByte(OP_NEGATE); break;
 		default: return;
 	}
@@ -87,13 +91,26 @@ void Compiler::binary(Compiler* comp)
 		case MINUS:				comp->emitByte(OP_SUB); break;
 		case STAR:				comp->emitByte(OP_MUL); break;
 		case SLASH_FORWARD:		comp->emitByte(OP_DIV); break;
+
+		case BANG_EQUAL:		comp->emitBytes(OP_EQUAL, OP_NOT); 		break;
+		case EQUAL_EQUAL:		comp->emitByte(OP_EQUAL); 				break;
+		case GREATER:			comp->emitByte(OP_GREATER); 			break;
+		case GREATER_EQUAL:		comp->emitBytes(OP_LESS, OP_NOT); 		break;
+		case LESS:				comp->emitByte(OP_LESS);				break;
+		case LESS_EQUAL:		comp->emitBytes(OP_GREATER,OP_NOT);		break;
+
 		default: return;
 	}
 }
 
-uint8_t Compiler::makeConstant(int value)
+void Compiler::string(Compiler* comp)
 {
-	int constant = Compiler::currentChunk()->addConstant(value);
+	emitConstant(OBJ_VAL(copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));
+}
+
+uint8_t Compiler::makeConstant(Value value)
+{
+	int constant = Compiler::currentChunk()->addConstant( value );
 	if (constant > UINT8_MAX)
 	{
 		Compiler::error("Too many constants in one chunk.");
@@ -103,7 +120,7 @@ uint8_t Compiler::makeConstant(int value)
 	return (uint8_t)constant;
 }
 
-void Compiler::emitConstant(int value)
+void Compiler::emitConstant(Value value)
 {
 	emitBytes(OP_CONSTANT, makeConstant(value));
 }
@@ -111,13 +128,31 @@ void Compiler::emitConstant(int value)
 void Compiler::number(Compiler* comp)
 {
 	int value = atoi(comp->parser.previous.start);
-	comp->emitConstant(value);
+	comp->emitConstant(INT_VAL(value));
 }
 
 void Compiler::grouping(Compiler* comp)
 {
 	comp->expression();
 	comp->consume(RIGHT_PAREN, "Expect ')' after expression.");
+}
+
+void Compiler::literal(Compiler* comp)
+{
+	switch(comp->parser.previous.type)
+	{
+		case FALSE:
+			comp->emitByte(OP_FALSE); break;
+		
+		case TRUE:
+			comp->emitByte(OP_TRUE); break;
+		
+		case NIL:
+			comp->emitByte(OP_NIL); break;
+		
+		default: return; //unreachable
+
+	}
 }
 
 Chunk* Compiler::currentChunk()
