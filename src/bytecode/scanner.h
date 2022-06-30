@@ -5,7 +5,6 @@
 #include <map>
 #include <iostream>
 
-#include "common.h"
 #include "token.h"
 
 namespace GDPP
@@ -20,13 +19,7 @@ namespace GDPP
 		int tabLevel;
 	};
 
-	struct BToken // the name is due to Token used in the include, stands for Token Bytecode
-	{
-		TokenType type;
-		const char* start;
-		int length;
-		int line;
-	};
+
 
 
 	const std::map<const std::string, TokenType> keywordMap = {
@@ -80,12 +73,12 @@ namespace GDPP
 			Scanner();
 			~Scanner();
 			void start(std::string* p_src);
-			BToken scanToken();
-			BToken errorToken(std::string* message);
-			BToken makeToken(TokenType t);
-			BToken string();
-			BToken number();
-			BToken identifier();
+			Token scanToken();
+			Token errorToken(std::string* message);
+			Token makeToken(TokenType t);
+			Token string();
+			Token number();
+			Token identifier();
 			bool isAtEnd();
 			bool match(char expected);
 			char advance();

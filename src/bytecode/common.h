@@ -25,11 +25,12 @@ namespace GDPP
 		OP_EQUAL,
 		OP_GREATER,
 		OP_LESS,
+		OP_PRINT,
 
 		MAX,
 	};
 
-	const char * const OPCODES[15] = 
+	const char * const OPCODES[16] = 
 	{
 		"OP_CONSTANT",
 		"OP_NEGATE",
@@ -45,19 +46,10 @@ namespace GDPP
 		"OP_EQUAL",
 		"OP_GREATER",
 		"OP_LESS",
+		"OP_PRINT",
 
 		"MAX"
 	};
-
-
-
-
-
-
-
-	
-
-	
 
 } // namespace GDPP
 

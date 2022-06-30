@@ -1,11 +1,9 @@
 #ifndef GD_VALUE
 #define GD_VALUE
 
-#include "common.h"
-#include "unordered_map"
-#include "stack.hpp"
 #include "object.h"
 #include <string.h>
+#include <cstdio>
 
 namespace GDPP
 {
@@ -29,8 +27,6 @@ namespace GDPP
 	typedef struct Obj Obj;
 	typedef struct ObjString ObjString;
 	
-
-
 	struct Value
 	{
 		ValueType type;
@@ -62,6 +58,21 @@ namespace GDPP
 	#define IS_NIL(value)		((value).type == VAL_NIL)
 	#define IS_NUMBER(value)	( IS_INT(value) || IS_FLOAT(value) )
 	#define IS_OBJ(value)		((value).type == VAL_OBJ)
+
+
+	class Print
+	{
+		public:
+			static void printObject(Value value);
+			static void printValue(Value value);
+	};
+
+	class ValueHelper
+	{
+		public:
+			static bool values_equal(Value a, Value b);
+	};
+
 
 
 

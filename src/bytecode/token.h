@@ -54,6 +54,15 @@ namespace GDPP
 
 		"NIL", "TK_ERROR", "TK_EOF"
 	};
+
+	struct Token
+	{
+		TokenType type;
+		const char* start;
+		int length;
+		int line;
+	};
+	
 } // namespace GDPP
 
 

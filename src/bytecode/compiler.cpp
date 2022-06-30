@@ -17,11 +17,46 @@ bool Compiler::compile(std::string* p_src, Chunk* p_chunk)
 	parser.panicMode = false;
 	compilingChunk = p_chunk;
 	advance();
-	expression();
-	consume(TK_EOF, "Expect end of expression");
+	// expression();
+	// consume(TK_EOF, "Expect end of expression");
+	while (!match(TK_EOF))
+	{
+		declaration();
+	}
 	endCompiler();
 	return !parser.hadError;
 }
+
+
+void Compiler::declaration()
+{
+	statement();
+}
+
+void Compiler::statement()
+{
+	if (match(PRINT)) statement_print();
+}
+
+void Compiler::statement_print()
+{
+	expression();
+	emitByte(OP_PRINT);
+}
+
+bool Compiler::match(TokenType type)
+{
+	if ( !check(type) ) return false;
+	advance();
+	return true;
+}
+
+bool Compiler::check(TokenType type)
+{
+	return parser.current.type == type;
+}
+
+
 
 const ParseRule* Compiler::getRule(TokenType p_type)
 {
@@ -105,7 +140,7 @@ void Compiler::binary(Compiler* comp)
 
 void Compiler::string(Compiler* comp)
 {
-	emitConstant(OBJ_VAL(copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));
+	comp->emitConstant(OBJ_VAL(ObjHelper::copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));
 }
 
 uint8_t Compiler::makeConstant(Value value)
@@ -222,7 +257,7 @@ void Compiler::error(const char* message)
 	errorAt(&parser.previous, message);
 }
 
-void Compiler::errorAt(BToken* token, const char* message)
+void Compiler::errorAt(Token* token, const char* message)
 {
 	if (parser.panicMode) return;
 	parser.panicMode = true;

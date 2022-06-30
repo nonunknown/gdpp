@@ -3,13 +3,10 @@
 
 
 #include <string>
-#include "scanner.h"
-#include "common.h"
-#include "chunk.h"
-#include "token.h"
 #include <unordered_map>
 #include <functional>
-#include "value.h"
+
+#include "scanner.h"
 
 #ifdef DEBUG_PRINT_CODE
 	#include "debug.h"
@@ -20,8 +17,8 @@ namespace GDPP
 
 	struct Parser
 	{
-		BToken current;
-		BToken previous;
+		Token current;
+		Token previous;
 		bool hadError;
 		bool panicMode;
 	};
@@ -56,7 +53,7 @@ namespace GDPP
 			void consume(TokenType type, const char* message);
 			void errorAtCurrent(const char* message);
 			void error(const char* message);
-			void errorAt(BToken* token, const char* message);
+			void errorAt(Token* token, const char* message);
 			void emitByte(uint8_t byte);
 			void emitBytes(uint8_t byte, uint8_t byte2);
 			void endCompiler();
@@ -73,6 +70,13 @@ namespace GDPP
 			static void string(Compiler* comp);
  			void emitConstant(Value value);
 			uint8_t makeConstant(Value value);
+
+			bool check(TokenType type);
+			bool match(TokenType type);
+			void statement();
+			void declaration();
+
+			void statement_print();
 
 	};
 

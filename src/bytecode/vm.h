@@ -5,7 +5,10 @@
 #include "value.h"
 #include "compiler.h"
 #include "debug.h"
-#include "stack.hpp"
+#include "object.h"
+#include "memory.h"
+
+#include <string.h>
 #include <stdarg.h>
 
 namespace GDPP
@@ -24,7 +27,7 @@ namespace GDPP
 		private:
 			Chunk* chunk;
 			Compiler compiler;
-			StackManager sm;
+			// StackManager sm;
 			Value stack[STACK_MAX];
 			Value* stackTop;
 			uint8_t* ip;
@@ -33,6 +36,8 @@ namespace GDPP
 		public:
 			VM();
 			~VM();
+			Obj* objects;
+			static VM* instance;
 			InterpretResult interpret(std::string* p_src);
 			void resetStack();
 			void push(Value value);
@@ -40,6 +45,8 @@ namespace GDPP
 			Value peek(int distance);
 			void runtime_error(const char* format, ...);
 			bool is_falsey(Value value);
+			void concatenate_str();
+			ObjString* take_str(char* chars, int length);
 
 	};
 } // namespace GDPP

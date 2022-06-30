@@ -28,7 +28,7 @@ void Stack::printStack()
 
 		printf("%02x, ", begin[n]);
 
-		if ( n == top - begin)
+		if ( n == (size_t)(top - begin) )
 		{
 			printf("<- TOP | %d |", (byte)(*top));
 		}
@@ -47,7 +47,7 @@ void Stack::printBeginEnd()
 	}
 
 	printf("STACK -> %d | [ ", id);
-	for (size_t n=0;n<(top - begin);n++)
+	for (int n=0;n<(int)(top - begin);n++)
 	{
 		printf("%d", n);
 	}

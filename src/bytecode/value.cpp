@@ -2,24 +2,8 @@
 
 using namespace GDPP;
 
-static void printValue(Value value)
-{
-	switch(value.type)
-	{
-		case VAL_BOOL:
-			printf(AS_BOOL(value) ? "true" : "false"); break;
-		case VAL_NIL:
-			printf("NULL"); break;
-		case VAL_INT:
-			printf("%i", AS_INT(value)); break;
-		case VAL_FLOAT:
-			printf("%g", AS_FLOAT(value)); break;
-		case VAL_OBJ:
-			printObject(value); break;
-	}
-}
 
-static void printObject(Value value)
+void Print::printObject(Value value)
 {
 	switch(OBJ_TYPE(value))
 	{
@@ -32,7 +16,24 @@ static void printObject(Value value)
 	}
 }
 
-static bool values_equal(Value a, Value b)
+void Print::printValue(Value value)
+{
+	switch(value.type)
+	{
+		case VAL_BOOL:
+			printf(AS_BOOL(value) ? "true" : "false"); break;
+		case VAL_NIL:
+			printf("NULL"); break;
+		case VAL_INT:
+			printf("%i", AS_INT(value)); break;
+		case VAL_FLOAT:
+			printf("%g", AS_FLOAT(value)); break;
+		case VAL_OBJ:
+			Print::printObject(value); break;
+	}
+}
+
+bool ValueHelper::values_equal(Value a, Value b)
 {
 	if (a.type != b.type) return false;
 	switch(a.type)

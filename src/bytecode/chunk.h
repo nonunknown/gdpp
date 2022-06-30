@@ -1,10 +1,7 @@
 #ifndef GD_CHUNK
 #define GD_CHUNK
 
-#include "common.h"
-#include "memory.h"
 #include "value.h"
-
 
 #include <vector>
 #include <inttypes.h>

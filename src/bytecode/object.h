@@ -1,11 +1,10 @@
 #ifndef GD_OBJ
 #define GD_OBJ
 
-#include "common.h"
-#include "memory.h"
+
 #include "value.h"
+#include "memory.h"
 #include "vm.h"
-#include "object.h"
 
 namespace GDPP
 {
@@ -22,6 +21,7 @@ namespace GDPP
 	struct Obj
 	{
 		ObjType type;
+		Obj* next;
 	};
 
 	struct ObjString
@@ -32,14 +32,29 @@ namespace GDPP
 	};
 
 	#define OBJ_TYPE(value) ( AS_OBJ(value)->type )
-	#define IS_STRING(value) ( is_obj_type(value, OBJ_STRING) )
+	#define IS_STRING(value) ( ObjHelper::is_obj_type(value, OBJ_STRING) )
 
 
 
 	#define AS_STRING(value)		( (ObjString*)AS_OBJ(value) )
 	#define AS_CSTRING(value)		( ((ObjString*)AS_OBJ(value))->chars )
 
-	ObjString* copy_str(const char* chars, int length);
+	
+
+	class ObjHelper
+	{
+		public:
+			static ObjString* allocate_str(char* chars, int length);
+			static ObjString* copy_str(const char* chars, int length);
+			static inline bool is_obj_type(Value value, ObjType type);
+	};
+
+	class MemoryHelper
+	{
+		static void free_obj(Obj* obj);
+		static void free_objs();
+	};
+
 
 } // namespace GDPP
 

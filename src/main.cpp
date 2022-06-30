@@ -49,7 +49,7 @@ int main()
 
 	VM vm = VM();
 
-	readFile("scripts/example.gdpp");
+	readFile("scripts/example.gd");
 	std::cout << sourceCode << std::endl;
 
 	// const char* t = "test";

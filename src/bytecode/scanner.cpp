@@ -77,7 +77,7 @@ void Scanner::skipWhitespace()
 	}
 }
 
-BToken Scanner::scanToken()
+Token Scanner::scanToken()
 {
 	skipWhitespace();
 	data.start = data.current;
@@ -122,7 +122,7 @@ BToken Scanner::scanToken()
 	return errorToken(&msg);
 }
 
-BToken Scanner::string()
+Token Scanner::string()
 {
 	while( peek() != '"' && !isAtEnd() )
 	{
@@ -138,7 +138,7 @@ BToken Scanner::string()
 
 }
 
-BToken Scanner::number()
+Token Scanner::number()
 {
 	while( isdigit( peek() ) ) advance();
 
@@ -152,7 +152,7 @@ BToken Scanner::number()
 	return makeToken(INT);
 }
 
-BToken Scanner::identifier()
+Token Scanner::identifier()
 {
 	while( isalnum(peek()) ) advance();
 
@@ -195,9 +195,9 @@ TokenType Scanner::checkKeyword(int start, int length, const char* rest, TokenTy
 	return IDENTIFIER;
 }
 
-BToken Scanner::makeToken(TokenType t)
+Token Scanner::makeToken(TokenType t)
 {
-	BToken token;
+	Token token;
 	token.type = t;
 	token.start = data.start;
 	token.length = (int)(data.current - data.start);
@@ -207,9 +207,9 @@ BToken Scanner::makeToken(TokenType t)
 	return token;
 }
 
-BToken Scanner::errorToken(std::string* message)
+Token Scanner::errorToken(std::string* message)
 {
-	BToken token;
+	Token token;
 	token.type = TokenType::TK_ERROR;
 	token.start = message->c_str();
 	token.length = (int)message->length();

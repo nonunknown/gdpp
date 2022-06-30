@@ -2,8 +2,9 @@
 #define GD_MEMORY
 
 #include "common.h"
-#include <sys/types.h>
+#include "object.h"
 #include <stdlib.h>
+#include <sys/types.h>
 
 namespace GDPP
 {
@@ -38,6 +39,9 @@ namespace GDPP
 	
 	#define ALLOCATE(type, count) \
 		(type*)reallocate(NULL, 0, sizeof(type) * (count))
+	
+	#define FREE(type, pointer) reallocate(pointer, sizeof(type), 0)
+
 }
 
 #endif

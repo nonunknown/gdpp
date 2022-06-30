@@ -1,8 +1,11 @@
 #include <iostream>
 #include <unordered_map>
+#include <map>
 #include <memory.h>
 #include <vector>
 #include "stack.hpp"
+#include <chrono>
+#include <functional>
 
 using namespace GDPP;
 
@@ -29,65 +32,115 @@ struct Value
 
 #define INT_VAL(value) (Value {VAL_INT, value})
 
-int main()
+
+
+
+void do_switch(int value)
 {
-	StackManager sm = StackManager();
-	
 
-
-	int i = 10;
-	double da;
-	double d = 200.22;
-
-	
-	Value<int> v {(byte)200, 10};
-	byte* bytes = (byte*)&i;
-
-	std::cout << "size of value: " << sizeof(v) << std::endl;
-	for(size_t n=0;n<8;i++)
+	switch(value)
 	{
-		printf("%02x", bytes[n]);
+		case 0: printf("0"); break;
+		case 1: printf("1"); break;
+		case 2: printf("2"); break;
+		case 3: printf("3"); break;
+		case 4: printf("4"); break;
+		case 5: printf("5"); break;
+		case 6: printf("6"); break;
+		case 7: printf("7"); break;
+		case 8: printf("8"); break;
+		default: printf("NULL"); break;
 	}
 
-	// for(int i=0;i<100;i++)
-	// {
-	// 	sm.get_stack()->append(&i, sizeof(int));
-	// 	sm.get_stack()->append(&d, sizeof(double));
-	// }
+}
+
+typedef void (*any)();
+
+const std::map<int,std::function<void()>> mapped {
+	{0, [](){printf("0");}},
+	{1, [](){printf("1");}},
+	{2, [](){printf("2");}},
+	{3, [](){printf("3");}},
+	{4, [](){printf("4");}},
+	{5, [](){printf("5");}},
+	{6, [](){printf("6");}},
+	{7, [](){printf("7");}},
+	{8, [](){printf("8");}}
+};
+
+void do_map(int value)
+{
+	try
+	{
+		mapped.at(value)();
+	}
+	catch(const std::exception& e)
+	{
+		printf("NULL");
+	}
 	
-	// sm.get_stack()->push(&d, sizeof(double));
-	// sm.get_stack()->pop(sizeof(double), &da);
-	// sm.get_stack()->push(&da, sizeof(double));
-	// sm.get_stack()->push(&da, sizeof(double));
-	// sm.get_stack()->push(&i, sizeof(int));
+}
 
-	// sm.get_stack()->pop(sizeof(int), &ia);
+int main()
+{
+	int total_switch = 0;
+	int total_mapped = 0;
+	const int TIMES = 500;
 
-	// byte* a = (byte*)calloc(256,sizeof(byte));
 
-	// if (a == NULL)
-	// {
-	// 	std::cerr << "unable to allocate memory" << std::endl;
-	// 	exit(-1);
-	// }
-	// int i = 5000;
-	// int ia = 200;
-	// memcpy(a,&i,sizeof(int));
-	// memcpy(a+sizeof(int),&ia,sizeof(int));
-
-	// printf("[ ");
+	for (int i = 0; i < TIMES; i++)
+	{
 	
-	// for(size_t n=0;n<256;n++)
-	// {
-	// 	printf("%02x, ", a[n]);
-	// }
-	// printf(" ];\n");
-	// std::cout << (int)(*a) << std::endl;
-	// std::cout << (int)(*(a+sizeof(int)) ) << std::endl;
-	// std::cout << sizeof(INT_VALUE(22)) << " | " << sizeof(int) << std::endl;
-	// std::cout << sizeof(FLOAT_VALUE(10.1)) << " | " << sizeof(float) << std::endl;
-	// std::cout << sizeof(DOUBLE_VALUE(0.231231231)) << " | " << sizeof(double) << std::endl;
+		auto ts_switch = std::chrono::steady_clock::now();
+
+		for (size_t i = 0; i < 1000000; i++)
+		{
+			do_switch(i % 20);
+		}
+
+		auto te_switch = std::chrono::steady_clock::now();
+
+		auto ts_map = std::chrono::steady_clock::now();
+
+		for (size_t i = 0; i < 1000000; i++)
+		{
+			do_map(i % 20);
+		}
+		
+
+		auto te_map = std::chrono::steady_clock::now();
+
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+
+		// std::cout << "SWITCH TIME" << std::endl;
+
+		// std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(te_switch - ts_switch).count() << " nanoseconds" << std::endl;
+		// std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te_switch - ts_switch).count() << " microseconds" << std::endl;
+		// std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(te_switch - ts_switch).count() << " milliseconds" << std::endl;
+		// std::cout << std::chrono::duration_cast<std::chrono::seconds>(te_switch - ts_switch).count() << " seconds" << std::endl;
+
+		// std::cout << "MAPPED TIME" << std::endl;
+
+		// std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(te_map - ts_map).count() << " nanoseconds" << std::endl;
+		// std::cout << std::chrono::duration_cast<std::chrono::microseconds>(te_map - ts_map).count() << " microseconds" << std::endl;
+		// std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(te_map - ts_map).count() << " milliseconds" << std::endl;
+		// std::cout << std::chrono::duration_cast<std::chrono::seconds>(te_map - ts_map).count() << " seconds" << std::endl;
+
+		total_switch += std::chrono::duration_cast<std::chrono::milliseconds>(te_switch - ts_switch).count();
+		total_mapped += std::chrono::duration_cast<std::chrono::milliseconds>(te_map - ts_map).count();
+	}
+
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "Median Switch: " << total_switch / TIMES << std::endl;
+	std::cout << "Median Mapped: " << total_mapped / TIMES << std::endl;
+
 	
-	// free(a);
 	return 0;
 }
