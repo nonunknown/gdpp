@@ -7,8 +7,8 @@ static Obj* allocate_obj(size_t size, ObjType type)
 {
 	Obj* object = (Obj*)reallocate(NULL,0, size);
 	object->type = type;
-	object->next = VM::instance->objects;
-	VM::instance->objects = object;
+	object->next = vm_instance->objects;
+	vm_instance->objects = object;
 	return object;
 }
 
@@ -51,7 +51,7 @@ void MemoryHelper::free_obj(Obj* obj)
 
 void MemoryHelper::free_objs()
 {
-	Obj* object = VM::instance->objects;
+	Obj* object = vm_instance->objects;
 	while(  object != nullptr)
 	{
 		Obj* next = object->next;

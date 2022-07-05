@@ -1,8 +1,6 @@
 #ifndef GD_MEMORY
 #define GD_MEMORY
 
-#include "common.h"
-#include "object.h"
 #include <stdlib.h>
 #include <sys/types.h>
 
@@ -42,6 +40,6 @@ namespace GDPP
 	
 	#define FREE(type, pointer) reallocate(pointer, sizeof(type), 0)
 
-}
+};
 
 #endif

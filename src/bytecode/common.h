@@ -2,8 +2,6 @@
 #ifndef GD_COMMON
 #define GD_COMMON
 
-#include <map>
-
 namespace GDPP
 {
 	#define DEBUG_TRACE_EXECUTION
@@ -51,7 +49,7 @@ namespace GDPP
 		"MAX"
 	};
 
-} // namespace GDPP
+}; // namespace GDPP
 
 
 #endif

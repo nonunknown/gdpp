@@ -6,7 +6,11 @@
 #include <unordered_map>
 #include <functional>
 
+#include "token.h"
 #include "scanner.h"
+#include "chunk.h"
+#include "common.h"
+// #include "object.h"
 
 #ifdef DEBUG_PRINT_CODE
 	#include "debug.h"
@@ -171,7 +175,7 @@ namespace GDPP
 		{ TK_EOF, 				makeData(	NULL,					NULL,					PREC_NONE		)}
 	};
 
-} // namespace GDPP
+}; // namespace GDPP
 
 
 #endif

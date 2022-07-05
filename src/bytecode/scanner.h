@@ -88,7 +88,7 @@ namespace GDPP
 			TokenType checkKeyword(int start, int length, const char* rest, TokenType type);
 
 	};
-} // namespace GDPP
+}; // namespace GDPP
 
 
 

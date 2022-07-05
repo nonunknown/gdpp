@@ -63,7 +63,7 @@ namespace GDPP
 		int line;
 	};
 	
-} // namespace GDPP
+}; // namespace GDPP
 
 
 

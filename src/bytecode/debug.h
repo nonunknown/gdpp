@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "chunk.h"
+#include "common.h"
 
 namespace GDPP
 {
@@ -18,7 +19,7 @@ namespace GDPP
 			int simpleInstruction(std::string name, int offset);
 			int constantInstruction(std::string name,Chunk* chunk, int offset);
 	};
-} // namespace GDPP
+}; // namespace GDPP
 
 
 #endif

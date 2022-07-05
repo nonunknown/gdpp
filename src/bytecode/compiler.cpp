@@ -5,7 +5,8 @@ using namespace GDPP;
 
 Compiler::Compiler()
 {
-
+	parser = Parser();
+	compilingChunk = nullptr;
 }
 
 bool Compiler::compile(std::string* p_src, Chunk* p_chunk)
@@ -122,7 +123,7 @@ void Compiler::binary(Compiler* comp)
 	comp->parsePrecedence((Precendence)(rule->precendence + 1));
 	switch(operatorType)
 	{
-		case PLUS:				comp->emitByte(OP_ADD); break;
+		case PLUS:				comp->emitByte(OpCode::OP_ADD); break;
 		case MINUS:				comp->emitByte(OP_SUB); break;
 		case STAR:				comp->emitByte(OP_MUL); break;
 		case SLASH_FORWARD:		comp->emitByte(OP_DIV); break;
@@ -138,6 +139,7 @@ void Compiler::binary(Compiler* comp)
 	}
 }
 
+#include "object.h"
 void Compiler::string(Compiler* comp)
 {
 	comp->emitConstant(OBJ_VAL(ObjHelper::copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));

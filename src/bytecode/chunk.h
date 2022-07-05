@@ -1,10 +1,10 @@
 #ifndef GD_CHUNK
 #define GD_CHUNK
 
-#include "value.h"
-
 #include <vector>
 #include <inttypes.h>
+#include "value.h"
+#include "memory.h"
 
 namespace GDPP
 {
@@ -22,6 +22,7 @@ namespace GDPP
 			void free();
 			int addConstant(Value value);
 	};
-}
+
+};
 
 #endif

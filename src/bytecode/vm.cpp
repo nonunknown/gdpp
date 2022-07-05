@@ -1,10 +1,16 @@
 #include "vm.h"
+#include "common.h"
+#include "object.h"
+
+#ifdef DEBUG_TRACE_EXECUTION
+	#include "debug.h"
+#endif
 
 using namespace GDPP;
 
 VM::VM()
 {
-	instance = this; //Hacky Singleton, must be removed if multiple instances of it are created! Used in Object.cpp
+	vm_instance = this; //Hacky Singleton, must be removed if multiple instances of it are created! Used in Object.cpp
 	objects = nullptr;
 	compiler = Compiler();
 	resetStack();
@@ -17,17 +23,16 @@ VM::~VM()
 
 InterpretResult VM::interpret(std::string* p_src)
 {
-	Chunk c = Chunk();
+	chunk = Chunk();
 	src = p_src;
 
-	if (!compiler.compile(p_src, &c))
+	if (!compiler.compile(p_src, &chunk))
 	{
 		//TODO: free chunk
 		return INTERPRET_COMPILE_ERROR;
 	}
 
-	chunk = &c;
-	ip = chunk->code;
+	ip = chunk.code;
 
 
 	InterpretResult result = run();
@@ -36,13 +41,15 @@ InterpretResult VM::interpret(std::string* p_src)
 	return result;
 }
 
+
+
 InterpretResult VM::run()
 {
 	#ifdef DEBUG_TRACE_EXECUTION
 		Disassemble disassemble = Disassemble();
 	#endif
 	#define READ_BYTE() (*ip++) // Instruction pointer increment, or Program counter
-	#define READ_CONSTANT() (chunk->constants.at(READ_BYTE()));
+	#define READ_CONSTANT() (chunk.constants.at(READ_BYTE()));
 	#define BINARY_OP(valueType, op) 							\
 		do { 													\
 			if ( !IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1)) )	\
@@ -68,7 +75,7 @@ InterpretResult VM::run()
 			std::cout << std::endl;
 			
 
-			disassemble.fromInstruction(chunk, (int)(ip - chunk->code));
+			disassemble.fromInstruction(&chunk, (int)(ip - chunk.code));
 		#endif
 
 		uint8_t instruction;
@@ -90,22 +97,22 @@ InterpretResult VM::run()
 
 			case OP_ADD:
 			{
-				Value* a = &peek(0);
-				Value* b = &peek(1);
+				Value a = peek(0);
+				Value b = peek(1);
 
-				if ( IS_STRING(*a) && IS_STRING(*b) )
+				if ( IS_STRING(a) && IS_STRING(b) )
 				{
 					concatenate_str();
 				}
-				else if ( IS_NUMBER(*a) && IS_NUMBER(*b) )
+				else if ( IS_NUMBER(a) && IS_NUMBER(b) )
 				{
-					if ( IS_INT(*a) && IS_INT(*b) )
+					if ( IS_INT(a) && IS_INT(b) )
 					{
 						int b = AS_INT(pop());
 						int a = AS_INT(pop());
 						push(INT_VAL(a + b));
 					}
-					else if ( IS_FLOAT(*a) && IS_FLOAT(*b) )
+					else if ( IS_FLOAT(a) && IS_FLOAT(b) )
 					{
 						float b = AS_FLOAT(pop());
 						float a = AS_FLOAT(pop());
@@ -227,8 +234,8 @@ void VM::runtime_error(const char* format, ...)
 	va_end(args);
 	fputs("\n", stderr);
 
-	size_t instruction = ip - chunk->code - 1;
-	int line = chunk->lines[instruction];
+	size_t instruction = ip - chunk.code - 1;
+	int line = chunk.lines[instruction];
 	fprintf(stderr, "[line %d] in script\n", line);
 	resetStack();
 

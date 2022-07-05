@@ -12,6 +12,7 @@ Chunk::Chunk()
 
 Chunk::~Chunk()
 {
+
 }
 
 void Chunk::write(uint8_t byte, int line = -1)

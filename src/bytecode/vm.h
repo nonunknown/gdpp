@@ -1,18 +1,14 @@
 #ifndef GD_VM
 #define GD_VM
 
-#include "chunk.h"
-#include "value.h"
-#include "compiler.h"
-#include "debug.h"
-#include "object.h"
-#include "memory.h"
-
 #include <string.h>
 #include <stdarg.h>
+#include "value.h"
+#include "compiler.h"
 
 namespace GDPP
 {
+
 	#define STACK_MAX 256
 
 	typedef enum
@@ -22,22 +18,15 @@ namespace GDPP
 		INTERPRET_RUNTIME_ERROR
 	} InterpretResult;
 
+	class VM;
+	static VM* vm_instance;
+
 	class VM
 	{
-		private:
-			Chunk* chunk;
-			Compiler compiler;
-			// StackManager sm;
-			Value stack[STACK_MAX];
-			Value* stackTop;
-			uint8_t* ip;
-			InterpretResult run();
-			std::string* src;
 		public:
 			VM();
 			~VM();
 			Obj* objects;
-			static VM* instance;
 			InterpretResult interpret(std::string* p_src);
 			void resetStack();
 			void push(Value value);
@@ -47,8 +36,19 @@ namespace GDPP
 			bool is_falsey(Value value);
 			void concatenate_str();
 			ObjString* take_str(char* chars, int length);
+		private:
+			Chunk chunk;
+			Compiler compiler;
+			// StackManager sm;
+			Value stack[STACK_MAX];
+			Value* stackTop;
+			uint8_t* ip;
+			InterpretResult run();
+			std::string* src;
 
 	};
+
+
 } // namespace GDPP
 
 

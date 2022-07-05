@@ -1,9 +1,7 @@
 #ifndef GD_VALUE
 #define GD_VALUE
 
-#include "object.h"
-#include <string.h>
-#include <cstdio>
+#include <stdio.h>
 
 namespace GDPP
 {
@@ -21,7 +19,8 @@ namespace GDPP
 		"VAL_NIL",
 		"VAL_BOOL",
 		"VAL_INT",
-		"VAL_FLOAT"
+		"VAL_FLOAT",
+		"VAL_OBJ",
 	};
 
 	typedef struct Obj Obj;
@@ -77,6 +76,6 @@ namespace GDPP
 
 
 
-}
+};
 
 #endif
