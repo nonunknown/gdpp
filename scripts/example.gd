@@ -1,1 +1,2 @@
-"test" != "tesat"
+var test = "Hello world"
+print(test)

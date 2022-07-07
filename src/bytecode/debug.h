@@ -14,10 +14,10 @@ namespace GDPP
 		public:
 			Disassemble();
 			~Disassemble();
-			void fromChunk(Chunk* chunk, std::string name);
-			int fromInstruction(Chunk* chunk, int offset);
-			int simpleInstruction(std::string name, int offset);
-			int constantInstruction(std::string name,Chunk* chunk, int offset);
+			void from_chunk(Chunk* chunk, std::string name);
+			int from_instruction(Chunk* chunk, int offset);
+			int simple_instruction(std::string name, int offset);
+			int constant_instruction(std::string name,Chunk* chunk, int offset);
 	};
 }; // namespace GDPP
 

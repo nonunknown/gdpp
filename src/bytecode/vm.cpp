@@ -48,8 +48,10 @@ InterpretResult VM::run()
 	#ifdef DEBUG_TRACE_EXECUTION
 		Disassemble disassemble = Disassemble();
 	#endif
+	
 	#define READ_BYTE() (*ip++) // Instruction pointer increment, or Program counter
-	#define READ_CONSTANT() (chunk.constants.at(READ_BYTE()));
+	#define READ_CONSTANT() (chunk.constants.at(READ_BYTE()))
+	#define READ_STRING() AS_STRING(READ_CONSTANT())
 	#define BINARY_OP(valueType, op) 							\
 		do { 													\
 			if ( !IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1)) )	\
@@ -69,13 +71,13 @@ InterpretResult VM::run()
 			std::cout << "STACK ->	";
 			for( Value* slot = stack; slot < stackTop; slot++ )
 			{
-				Print::printValue(*slot);
+				Print::print_value(*slot);
 			}
 
 			std::cout << std::endl;
 			
 
-			disassemble.fromInstruction(&chunk, (int)(ip - chunk.code));
+			disassemble.from_instruction(&chunk, (int)(ip - chunk.code));
 		#endif
 
 		uint8_t instruction;
@@ -88,12 +90,6 @@ InterpretResult VM::run()
 				push(constant);
 				break;
 			}
-
-			// case OP_NEGATE:
-			// {
-			// 	push(-pop());
-			// 	break;
-			// }
 
 			case OP_ADD:
 			{
@@ -160,14 +156,41 @@ InterpretResult VM::run()
 
 			case OP_PRINT:
 			{
-				Print::printValue(pop());
+				Print::print_value(pop());
 				printf("\n");
 				break;
 			}
 
-			// case OP_RETURN:
-			// 	std::cout << "finished" << std::endl;
-			// 	return INTERPRET_OK;
+			case OP_POP:
+			{
+				pop();
+				break;
+			}
+
+			case OP_DEFINE_GLOBAL:
+			{
+				ObjString* name = READ_STRING();
+				globals[name] = peek(0);
+				break;
+			}
+
+			case OP_GET_GLOBAL:
+			{
+				ObjString* name = READ_STRING();
+				Value value;
+				if (globals.find(name) != globals.end())
+				{
+					runtime_error("undefined variable '%s'.", name->chars);
+					return INTERPRET_RUNTIME_ERROR;
+				}
+				value = globals.at(name);
+				push(value);
+				break;
+			}
+
+			case OP_RETURN:
+				std::cout << "finished" << std::endl;
+				return INTERPRET_OK;
 			
 
 		}
@@ -176,6 +199,7 @@ InterpretResult VM::run()
 	#undef READ_BYTE
 	#undef READ_CONSTANT
 	#undef BINARY_OP
+	#undef READ_STRING
 
 	return INTERPRET_OK;
 }

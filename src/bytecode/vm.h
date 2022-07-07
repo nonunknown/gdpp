@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include "value.h"
 #include "compiler.h"
+#include <map>
 
 namespace GDPP
 {
@@ -42,6 +43,7 @@ namespace GDPP
 			// StackManager sm;
 			Value stack[STACK_MAX];
 			Value* stackTop;
+			std::map<ObjString*, Value> globals;
 			uint8_t* ip;
 			InterpretResult run();
 			std::string* src;

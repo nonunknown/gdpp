@@ -24,25 +24,115 @@ bool Compiler::compile(std::string* p_src, Chunk* p_chunk)
 	{
 		declaration();
 	}
-	endCompiler();
+	end_compiler();
 	return !parser.hadError;
 }
 
+void Compiler::synchronize()
+{
+	parser.panicMode = false;
+	while(parser.current.type != TK_EOF)
+	{
+		
+		// if (parser.previous.type == )
+		switch(parser.current.type)
+		{
+			case CLASS:
+			case FUNC:
+			case VAR:
+			case FOR:
+			case IF:
+			case WHILE:
+			case PRINT:
+			case RETURN:
+				return;
+			
+			default: ;//do nothing
+		}
+
+		advance();
+	}
+}
 
 void Compiler::declaration()
 {
-	statement();
+	if (match(VAR))
+	{
+		var_declaration();
+	}
+	else
+	{
+		statement();
+	}
+	if (parser.panicMode) synchronize();
 }
+
+
 
 void Compiler::statement()
 {
-	if (match(PRINT)) statement_print();
+	if (match(PRINT)) 
+	{
+		print_statement();
+	}
+	else
+	{
+		expression_statement();
+	}
 }
 
-void Compiler::statement_print()
+void Compiler::expression_statement()
 {
 	expression();
-	emitByte(OP_PRINT);
+	emit_byte(OP_POP);
+}
+
+void Compiler::print_statement()
+{
+	if (parser.current.type != LEFT_PAREN)
+	{
+		error_at_current("Expected '('");
+		return;
+	}
+	expression();
+	emit_byte(OP_PRINT);
+}
+
+void Compiler::var_declaration()
+{
+	uint8_t global = parse_var("Expected variable name");
+	
+	//TODO: strict typed variables
+	// consume(COLON,"Expected ':'");
+	
+	if (match(EQUAL)) expression();
+	else emit_byte(OP_NIL);
+
+	define_var(global);
+}
+
+uint8_t Compiler::parse_var(const char* message)
+{
+	consume(IDENTIFIER, message);
+	return identifier_constant(&parser.previous);
+}
+
+
+void Compiler::define_var(uint8_t global)
+{
+	emit_bytes(OP_DEFINE_GLOBAL, global);
+}
+
+void Compiler::named_var(Token name)
+{
+	uint8_t arg = identifier_constant(&name);
+	emit_bytes(OP_GET_GLOBAL, arg);
+}
+
+#include "object.h"
+uint8_t Compiler::identifier_constant(Token* name)
+{
+	return make_constant(OBJ_VAL( ObjHelper::copy_str(name->start, name->length) ));
 }
 
 bool Compiler::match(TokenType type)
@@ -59,7 +149,7 @@ bool Compiler::check(TokenType type)
 
 
 
-const ParseRule* Compiler::getRule(TokenType p_type)
+const ParseRule* Compiler::get_rule(TokenType p_type)
 {
 	const auto it = parseRule.find(p_type);
 	if (it != parseRule.end())
@@ -70,11 +160,11 @@ const ParseRule* Compiler::getRule(TokenType p_type)
 }
 
 
-void Compiler::parsePrecedence(Precendence precedence)
+void Compiler::parse_precedence(Precendence precedence)
 {
 	advance();
 
-	ParseFn prefixRule = getRule(parser.previous.type)->prefix;
+	ParseFn prefixRule = get_rule(parser.previous.type)->prefix;
 	if ( prefixRule == NULL )
 	{
 		error("Expected expression.");
@@ -83,17 +173,17 @@ void Compiler::parsePrecedence(Precendence precedence)
 
 	prefixRule(this);
 
-	while ( precedence <= getRule(parser.current.type)->precendence )
+	while ( precedence <= get_rule(parser.current.type)->precendence )
 	{
 		advance();
-		ParseFn infixRule = getRule(parser.previous.type)->infix;
+		ParseFn infixRule = get_rule(parser.previous.type)->infix;
 		infixRule(this);
 	}
 }
 
 void Compiler::expression()
 {
-	parsePrecedence(PREC_ASSIGNMENT);
+	parse_precedence(PREC_ASSIGNMENT);
 }
 
 void Compiler::unary(Compiler* comp)
@@ -103,14 +193,14 @@ void Compiler::unary(Compiler* comp)
 	//compile the operand;
 	comp->expression();
 
-	comp->parsePrecedence(PREC_UNARY);
+	comp->parse_precedence(PREC_UNARY);
 
 	switch(operatorType)
 	{
 		case NOT:
 		case BANG:
-			comp->emitByte(OP_NOT); break;
-		case MINUS: comp->emitByte(OP_NEGATE); break;
+			comp->emit_byte(OP_NOT); break;
+		case MINUS: comp->emit_byte(OP_NEGATE); break;
 		default: return;
 	}
 }
@@ -119,21 +209,21 @@ void Compiler::binary(Compiler* comp)
 {
 	TokenType operatorType = comp->parser.previous.type;
 
-	const ParseRule* rule = comp->getRule(operatorType);
-	comp->parsePrecedence((Precendence)(rule->precendence + 1));
+	const ParseRule* rule = comp->get_rule(operatorType);
+	comp->parse_precedence((Precendence)(rule->precendence + 1));
 	switch(operatorType)
 	{
-		case PLUS:				comp->emitByte(OpCode::OP_ADD); break;
-		case MINUS:				comp->emitByte(OP_SUB); break;
-		case STAR:				comp->emitByte(OP_MUL); break;
-		case SLASH_FORWARD:		comp->emitByte(OP_DIV); break;
+		case PLUS:				comp->emit_byte(OpCode::OP_ADD); break;
+		case MINUS:				comp->emit_byte(OP_SUB); break;
+		case STAR:				comp->emit_byte(OP_MUL); break;
+		case SLASH_FORWARD:		comp->emit_byte(OP_DIV); break;
 
-		case BANG_EQUAL:		comp->emitBytes(OP_EQUAL, OP_NOT); 		break;
-		case EQUAL_EQUAL:		comp->emitByte(OP_EQUAL); 				break;
-		case GREATER:			comp->emitByte(OP_GREATER); 			break;
-		case GREATER_EQUAL:		comp->emitBytes(OP_LESS, OP_NOT); 		break;
-		case LESS:				comp->emitByte(OP_LESS);				break;
-		case LESS_EQUAL:		comp->emitBytes(OP_GREATER,OP_NOT);		break;
+		case BANG_EQUAL:		comp->emit_bytes(OP_EQUAL, OP_NOT); 		break;
+		case EQUAL_EQUAL:		comp->emit_byte(OP_EQUAL); 				break;
+		case GREATER:			comp->emit_byte(OP_GREATER); 			break;
+		case GREATER_EQUAL:		comp->emit_bytes(OP_LESS, OP_NOT); 		break;
+		case LESS:				comp->emit_byte(OP_LESS);				break;
+		case LESS_EQUAL:		comp->emit_bytes(OP_GREATER,OP_NOT);		break;
 
 		default: return;
 	}
@@ -142,12 +232,17 @@ void Compiler::binary(Compiler* comp)
 #include "object.h"
 void Compiler::string(Compiler* comp)
 {
-	comp->emitConstant(OBJ_VAL(ObjHelper::copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));
+	comp->emit_constant(OBJ_VAL(ObjHelper::copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));
 }
 
-uint8_t Compiler::makeConstant(Value value)
+void Compiler::variable(Compiler* comp)
 {
-	int constant = Compiler::currentChunk()->addConstant( value );
+	comp->named_var(comp->parser.previous);
+}
+
+uint8_t Compiler::make_constant(Value value)
+{
+	int constant = Compiler::current_chunk()->add_constant( value );
 	if (constant > UINT8_MAX)
 	{
 		Compiler::error("Too many constants in one chunk.");
@@ -157,15 +252,15 @@ uint8_t Compiler::makeConstant(Value value)
 	return (uint8_t)constant;
 }
 
-void Compiler::emitConstant(Value value)
+void Compiler::emit_constant(Value value)
 {
-	emitBytes(OP_CONSTANT, makeConstant(value));
+	emit_bytes(OP_CONSTANT, make_constant(value));
 }
 
 void Compiler::number(Compiler* comp)
 {
 	int value = atoi(comp->parser.previous.start);
-	comp->emitConstant(INT_VAL(value));
+	comp->emit_constant(INT_VAL(value));
 }
 
 void Compiler::grouping(Compiler* comp)
@@ -179,51 +274,51 @@ void Compiler::literal(Compiler* comp)
 	switch(comp->parser.previous.type)
 	{
 		case FALSE:
-			comp->emitByte(OP_FALSE); break;
+			comp->emit_byte(OP_FALSE); break;
 		
 		case TRUE:
-			comp->emitByte(OP_TRUE); break;
+			comp->emit_byte(OP_TRUE); break;
 		
 		case NIL:
-			comp->emitByte(OP_NIL); break;
+			comp->emit_byte(OP_NIL); break;
 		
 		default: return; //unreachable
 
 	}
 }
 
-Chunk* Compiler::currentChunk()
+Chunk* Compiler::current_chunk()
 {
 	return compilingChunk;
 }
 
-void Compiler::emitByte(uint8_t byte)
+void Compiler::emit_byte(uint8_t byte)
 {
-	currentChunk()->write(byte, parser.previous.line);
+	current_chunk()->write(byte, parser.previous.line);
 }
 
-void Compiler::emitBytes(uint8_t byte, uint8_t byte2)
+void Compiler::emit_bytes(uint8_t byte, uint8_t byte2)
 {
-	emitByte(byte);
-	emitByte(byte2);
+	emit_byte(byte);
+	emit_byte(byte2);
 }
 
-void Compiler::endCompiler()
+void Compiler::end_compiler()
 {
-	emitReturn();
+	emit_return();
 
 	#ifdef DEBUG_PRINT_CODE
 		if (!parser.hadError)
 		{
 			Disassemble dis = Disassemble();
-			dis.fromChunk(currentChunk(),"code");
+			dis.from_chunk(current_chunk(),"code");
 		}
 	#endif
 }
 
-void Compiler::emitReturn()
+void Compiler::emit_return()
 {
-	emitByte(OP_RETURN);
+	emit_byte(OP_RETURN);
 }
 
 void Compiler::advance()
@@ -231,9 +326,9 @@ void Compiler::advance()
 	parser.previous = parser.current;
 	for(;;)
 	{
-		parser.current = scanner.scanToken();
+		parser.current = scanner.scan_token();
 		if ( parser.current.type != TK_ERROR ) break;
-		errorAtCurrent(parser.current.start);
+		error_at_current(parser.current.start);
 	}
 }
 
@@ -246,20 +341,20 @@ void Compiler::consume(TokenType type, const char* message)
 		return;
 	}
 
-	errorAtCurrent(message);
+	error_at_current(message);
 }
 
-void Compiler::errorAtCurrent(const char* message)
+void Compiler::error_at_current(const char* message)
 {	
-	errorAt(&parser.current, message);
+	error_at(&parser.current, message);
 }
 
 void Compiler::error(const char* message)
 {
-	errorAt(&parser.previous, message);
+	error_at(&parser.previous, message);
 }
 
-void Compiler::errorAt(Token* token, const char* message)
+void Compiler::error_at(Token* token, const char* message)
 {
 	if (parser.panicMode) return;
 	parser.panicMode = true;

@@ -12,19 +12,19 @@ Disassemble::~Disassemble()
 
 }
 
-void Disassemble::fromChunk(Chunk* chunk, std::string name)
+void Disassemble::from_chunk(Chunk* chunk, std::string name)
 {
 	std::cout << "== " << name << " == " << std::endl;
 	
 
 	for (int offset = 0; offset < chunk->count;)
 	{
-		offset = fromInstruction(chunk, offset);
+		offset = from_instruction(chunk, offset);
 	}
 
 }
 
-int Disassemble::fromInstruction(Chunk* chunk, int offset)
+int Disassemble::from_instruction(Chunk* chunk, int offset)
 {
 	printf("%04d   ", offset);
 
@@ -41,36 +41,26 @@ int Disassemble::fromInstruction(Chunk* chunk, int offset)
 
 	switch(instruction)
 	{
-		case OP_RETURN:
-			return simpleInstruction(OPCODES[OP_RETURN], offset);
 		case OP_CONSTANT:
-			return constantInstruction(OPCODES[OP_CONSTANT], chunk, offset);
+		case OP_DEFINE_GLOBAL:
+		case OP_GET_GLOBAL:
+			return constant_instruction(OPCODES[instruction], chunk, offset);
+		case OP_RETURN:
 		case OP_NEGATE:
-			return simpleInstruction(OPCODES[OP_NEGATE], offset);
 		case OP_ADD:
-			return simpleInstruction(OPCODES[OP_ADD], offset);
 		case OP_SUB:
-			return simpleInstruction(OPCODES[OP_SUB], offset);
 		case OP_DIV:
-			return simpleInstruction(OPCODES[OP_DIV], offset);
 		case OP_MUL:
-			return simpleInstruction(OPCODES[OP_MUL], offset);
 		case OP_NIL:
-			return simpleInstruction(OPCODES[OP_NIL], offset);
 		case OP_FALSE:
-			return simpleInstruction(OPCODES[OP_FALSE], offset);
 		case OP_TRUE:
-			return simpleInstruction(OPCODES[OP_TRUE], offset);
 		case OP_NOT:
-			return simpleInstruction(OPCODES[OP_NOT], offset);
 		case OP_EQUAL:
-      		return simpleInstruction(OPCODES[OP_EQUAL], offset);
 		case OP_GREATER:
-			return simpleInstruction(OPCODES[OP_GREATER], offset);
 		case OP_LESS:
-			return simpleInstruction(OPCODES[OP_LESS], offset);
 		case OP_PRINT:
-			return simpleInstruction(OPCODES[OP_PRINT], offset);
+		case OP_POP:
+			return simple_instruction(OPCODES[instruction], offset);
 			
 		default:
 			std::cout << "Unknown opcode at: " << instruction;
@@ -79,18 +69,18 @@ int Disassemble::fromInstruction(Chunk* chunk, int offset)
 	return 0;
 }
 
-int Disassemble::simpleInstruction(std::string name, int offset)
+int Disassemble::simple_instruction(std::string name, int offset)
 {
 	std::cout << name << std::endl;
 	return offset+1;
 }
 
-int Disassemble::constantInstruction(std::string name, Chunk* chunk, int offset)
+int Disassemble::constant_instruction(std::string name, Chunk* chunk, int offset)
 {
 	uint8_t constant = chunk->code[offset+1];
 	printf("%-16s %4d '", name.c_str(), constant);
 	const Value* v = &chunk->constants.at(constant);
-	Print::printValue(*v);
+	Print::print_value(*v);
 	printf("\n");
 	return offset + 2;
 }

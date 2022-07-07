@@ -3,17 +3,18 @@
 using namespace GDPP;
 
 
-static Obj* allocate_obj(size_t size, ObjType type)
+Obj* ObjHelper::allocate_obj(size_t size, ObjType type)
 {
 	Obj* object = (Obj*)reallocate(NULL,0, size);
 	object->type = type;
 	object->next = vm_instance->objects;
 	vm_instance->objects = object;
+	
 	return object;
 }
 
 #define ALLOCATE_OBJ(type, obj_type) \
-	(type*)allocate_obj(sizeof(type), obj_type)
+	(type*)ObjHelper::allocate_obj(sizeof(type), obj_type)
 
 ObjString* ObjHelper::allocate_str(char* chars, int length)
 {

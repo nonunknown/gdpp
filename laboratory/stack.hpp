@@ -18,8 +18,8 @@ class Stack;
 class Stack
 {
 	private:
-		void printStack();
-		void printBeginEnd();
+		void print_stack();
+		void print_begin_end();
 
 	public:
 		byte* begin;

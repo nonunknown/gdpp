@@ -4,6 +4,7 @@ using namespace GDPP;
 
 Chunk::Chunk()
 {
+	// cppcheck-suppress useInitializationList
 	constants = std::vector<Value>();
 	count = 0;
 	capacity = 0;
@@ -35,7 +36,7 @@ void Chunk::free()
 	Chunk();
 }
 
-int Chunk::addConstant(Value value)
+int Chunk::add_constant(Value value)
 {
 	constants.push_back(value);
 	return (int)(constants.size() -1);

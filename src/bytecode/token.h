@@ -15,7 +15,7 @@ namespace GDPP
 		LESS, LESS_EQUAL, FORWARD_ARROW,
 
 		// Literals.
-		IDENTIFIER, STRING, FLOAT, INT,
+		IDENTIFIER, STRING, FLOAT, INT, BOOL,
 
 		// Keywords.
 		AND, IN, NOT, AS, CLASS, EXTENDS, IS,
@@ -29,7 +29,7 @@ namespace GDPP
 		NIL, TK_ERROR, TK_EOF
 		};
 
-	const char* const TOKEN_NAMES[68] = { 
+	const char* const TOKEN_NAMES[69] = { 
 		// Single-character tokens.
 		"LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
 		"COMMA", "DOT", "MINUS", "PLUS", "SLASH_FORWARD", "STAR", "HASHTAG", "COLON", "SEMI",
@@ -41,7 +41,7 @@ namespace GDPP
 		"LESS", "LESS_EQUAL", "FORWARD_ARROW",
 
 		// Literals.
-		"IDENTIFIER", "STRING", "FLOAT", "INT",
+		"IDENTIFIER", "STRING", "FLOAT", "INT","BOOL",
 
 		// Keywords.
 		"AND", "IN", "NOT", "AS", "CLASS", "EXTENDS", "IS",

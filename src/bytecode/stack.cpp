@@ -20,7 +20,7 @@ void Stack::set_owner(StackManager* p_owner)
 }
 
 
-void Stack::printStack()
+void Stack::print_stack()
 {
 	printf("STACK -> %d [ ", id);
 	for(size_t n=0;n<STACK_MAX;n++)
@@ -37,7 +37,7 @@ void Stack::printStack()
 	printf(" ]\n\n");
 }
 
-void Stack::printBeginEnd()
+void Stack::print_begin_end()
 {
 
 	if (top == begin)
@@ -68,9 +68,9 @@ void Stack::push(void* what, int size)
 
 	memcpy(top,what,size); //copy the bytes from what to top
 	top += size; // move the top pointer to a empty part of the byte array
-	printStack();
+	print_stack();
 
-	printBeginEnd();
+	print_begin_end();
 }
 
 void Stack::pop(int size, void* destination=nullptr)
@@ -90,7 +90,7 @@ void Stack::pop(int size, void* destination=nullptr)
 	memcpy(destination, top, size); //copy the bytes to destination
 
 	memset(top,0,size); //clear the bytes in front of top
-	printStack();
+	print_stack();
 
 
 }

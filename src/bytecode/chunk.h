@@ -20,7 +20,7 @@ namespace GDPP
 			~Chunk();
 			void write(uint8_t byte, int line);
 			void free();
-			int addConstant(Value value);
+			int add_constant(Value value);
 	};
 
 };

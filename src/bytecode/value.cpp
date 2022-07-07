@@ -5,7 +5,7 @@
 using namespace GDPP;
 
 
-void Print::printObject(Value value)
+void Print::print_object(Value value)
 {
 	switch(OBJ_TYPE(value))
 	{
@@ -18,7 +18,7 @@ void Print::printObject(Value value)
 	}
 }
 
-void Print::printValue(Value value)
+void Print::print_value(Value value)
 {
 	switch(value.type)
 	{
@@ -31,7 +31,7 @@ void Print::printValue(Value value)
 		case VAL_FLOAT:
 			printf("%g", AS_FLOAT(value)); break;
 		case VAL_OBJ:
-			Print::printObject(value); break;
+			Print::print_object(value); break;
 	}
 }
 

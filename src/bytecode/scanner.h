@@ -73,19 +73,19 @@ namespace GDPP
 			Scanner();
 			~Scanner();
 			void start(std::string* p_src);
-			Token scanToken();
-			Token errorToken(std::string* message);
-			Token makeToken(TokenType t);
+			Token scan_token();
+			Token error_token(std::string* message);
+			Token make_token(TokenType t);
 			Token string();
 			Token number();
 			Token identifier();
-			bool isAtEnd();
+			bool is_at_end();
 			bool match(char expected);
 			char advance();
 			char peek();
-			char peekNext();
-			void skipWhitespace();
-			TokenType checkKeyword(int start, int length, const char* rest, TokenType type);
+			char peek_next();
+			void skip_whitespace();
+			TokenType check_keyword(int start, int length, const char* rest, TokenType type);
 
 	};
 }; // namespace GDPP

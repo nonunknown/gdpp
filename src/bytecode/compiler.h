@@ -46,24 +46,25 @@ namespace GDPP
 
 	class Compiler
 	{
+		//TODO: separate public from private vars
 		public:
 			Compiler();
 			Parser parser;
 			Scanner scanner;
 			Chunk* compilingChunk;
-			Chunk* currentChunk();
+			Chunk* current_chunk();
 			bool compile(std::string* src, Chunk* p_chunk);
 			void advance();
 			void consume(TokenType type, const char* message);
-			void errorAtCurrent(const char* message);
+			void error_at_current(const char* message);
 			void error(const char* message);
-			void errorAt(Token* token, const char* message);
-			void emitByte(uint8_t byte);
-			void emitBytes(uint8_t byte, uint8_t byte2);
-			void endCompiler();
-			void emitReturn();
- 			const ParseRule* getRule(TokenType p_type);
-			void parsePrecedence(Precendence precedence);
+			void error_at(Token* token, const char* message);
+			void emit_byte(uint8_t byte);
+			void emit_bytes(uint8_t byte, uint8_t byte2);
+			void end_compiler();
+			void emit_return();
+ 			const ParseRule* get_rule(TokenType p_type);
+			void parse_precedence(Precendence precedence);
  			void expression();
 			 //Those functions below are static, in order to user prets parser table -> look at parseRule variable
 			static void unary(Compiler* comp);
@@ -72,15 +73,24 @@ namespace GDPP
 			static void grouping(Compiler* comp);
 			static void literal(Compiler* comp);
 			static void string(Compiler* comp);
- 			void emitConstant(Value value);
-			uint8_t makeConstant(Value value);
+			static void variable(Compiler* comp);
+ 			void emit_constant(Value value);
+			uint8_t make_constant(Value value);
 
 			bool check(TokenType type);
 			bool match(TokenType type);
 			void statement();
 			void declaration();
+			void synchronize();
 
-			void statement_print();
+			void expression_statement();
+			void print_statement();
+			void var_declaration();
+
+			uint8_t parse_var(const char* message);
+			void define_var(uint8_t global);
+			void named_var(Token name);
+			uint8_t identifier_constant(Token* name);
 
 	};
 
@@ -130,7 +140,7 @@ namespace GDPP
 		{ LESS, 				makeData(	NULL,					Compiler::binary,		PREC_COMPARISION)},
 		{ LESS_EQUAL, 			makeData(	NULL,					Compiler::binary,		PREC_COMPARISION)},
 		{ FORWARD_ARROW, 		makeData(	NULL,					NULL,					PREC_NONE		)},
-		{ IDENTIFIER, 			makeData(	NULL,					NULL,					PREC_NONE		)},
+		{ IDENTIFIER, 			makeData(	Compiler::variable,		NULL,					PREC_NONE		)},
 		{ STRING, 				makeData(	Compiler::string,		NULL,					PREC_NONE		)},
 		{ FLOAT, 				makeData(	Compiler::number,		NULL,					PREC_NONE		)},
 		{ INT, 					makeData(	Compiler::number,		NULL,					PREC_NONE		)},

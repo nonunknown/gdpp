@@ -62,8 +62,8 @@ namespace GDPP
 	class Print
 	{
 		public:
-			static void printObject(Value value);
-			static void printValue(Value value);
+			static void print_object(Value value);
+			static void print_value(Value value);
 	};
 
 	class ValueHelper

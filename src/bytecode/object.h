@@ -36,6 +36,7 @@ namespace GDPP
 			static ObjString* allocate_str(char* chars, int length);
 			static ObjString* copy_str(const char* chars, int length);
 			static bool is_obj_type(Value value, ObjType type);
+			static Obj* allocate_obj(size_t size, ObjType type);
 	};
 
 	class MemoryHelper
