@@ -88,7 +88,11 @@ void Compiler::expression_statement()
 {
 	expression();
 	
-	emit_byte(OP_POP);
+	// TODO(fusion): There is probably a good reason for this OP_POP
+	// but currently it's only issuing a pop instruction that makes
+	// vm->stackTop go below &vm->stack[0]. This makes other pushs to
+	// the stack overwrite some of the VM state.
+	//emit_byte(OP_POP);
 }
 
 void Compiler::print_statement()
@@ -322,7 +326,7 @@ void Compiler::emit_bytes(uint8_t byte, uint8_t byte2)
 
 void Compiler::end_compiler()
 {
-	emit_return();
+	emit_byte(OP_EXIT);
 
 	#ifdef DEBUG_PRINT_CODE
 		if (!parser.hadError)
@@ -331,11 +335,6 @@ void Compiler::end_compiler()
 			dis.from_chunk(current_chunk(),"code");
 		}
 	#endif
-}
-
-void Compiler::emit_return()
-{
-	emit_byte(OP_RETURN);
 }
 
 void Compiler::advance()

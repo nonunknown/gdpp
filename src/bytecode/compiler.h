@@ -62,7 +62,6 @@ namespace GDPP
 			void emit_byte(uint8_t byte);
 			void emit_bytes(uint8_t byte, uint8_t byte2);
 			void end_compiler();
-			void emit_return();
  			const ParseRule* get_rule(TokenType p_type);
 			void parse_precedence(Precendence precedence);
  			void expression();

@@ -40,11 +40,11 @@ namespace GDPP
 
 
 
-	#define BOOL_VAL(value) 	((Value) { VAL_BOOL		, 		{.boolean = value		}})
-	#define INT_VAL(value)		((Value) { VAL_INT		,		{.numi = value			}})
-	#define FLOAT_VAL(value)	((Value) { VAL_FLOAT	,		{.numf = value			}})
-	#define NIL_VAL				((Value) { VAL_NIL		,		{.numi = 0				}})
-	#define OBJ_VAL(object)		((Value) { VAL_OBJ		,		{.obj = (Obj*)object	}})
+	#define BOOL_VAL(value) 	(Value{ VAL_BOOL	, 		{.boolean = value		}})
+	#define INT_VAL(value)		(Value{ VAL_INT		,		{.numi = value			}})
+	#define FLOAT_VAL(value)	(Value{ VAL_FLOAT	,		{.numf = value			}})
+	#define NIL_VAL				(Value{ VAL_NIL		,		{.numi = 0				}})
+	#define OBJ_VAL(object)		(Value{ VAL_OBJ		,		{.obj = (Obj*)object	}})
 
 	#define AS_BOOL(value)		((value).as.boolean)
 	#define AS_INT(value)		((value).as.numi)
@@ -71,11 +71,6 @@ namespace GDPP
 		public:
 			static bool values_equal(Value a, Value b);
 	};
-
-
-
-
-
 };
 
 #endif
