@@ -1,4 +1,5 @@
-#include "object.h"
+#include "obj_helper.h"
+
 
 using namespace GDPP;
 
@@ -7,14 +8,10 @@ Obj* ObjHelper::allocate_obj(size_t size, ObjType type)
 {
 	Obj* object = (Obj*)reallocate(NULL,0, size);
 	object->type = type;
-	object->next = vm_instance->objects;
-	vm_instance->objects = object;
-	
+	object->next = VM::instance->objects;
+	VM::instance->objects = object;
 	return object;
 }
-
-#define ALLOCATE_OBJ(type, obj_type) \
-	(type*)ObjHelper::allocate_obj(sizeof(type), obj_type)
 
 ObjString* ObjHelper::allocate_str(char* chars, int length)
 {
@@ -37,7 +34,7 @@ bool ObjHelper::is_obj_type(Value value, ObjType type)
 	return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 
-void MemoryHelper::free_obj(Obj* obj)
+void ObjHelper::free_obj(Obj* obj)
 {
 	switch(obj->type)
 	{
@@ -46,13 +43,14 @@ void MemoryHelper::free_obj(Obj* obj)
 			ObjString* str = (ObjString*)obj;
 			FREE_ARRAY(char, str->chars, str->length+1);
 			FREE(ObjString, obj);
+			break;
 		}
 	}
 }
 
-void MemoryHelper::free_objs()
+void ObjHelper::free_objs()
 {
-	Obj* object = vm_instance->objects;
+	Obj* object = VM::instance->objects;
 	while(  object != nullptr)
 	{
 		Obj* next = object->next;

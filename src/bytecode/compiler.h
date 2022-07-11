@@ -67,13 +67,13 @@ namespace GDPP
 			void parse_precedence(Precendence precedence);
  			void expression();
 			 //Those functions below are static, in order to user prets parser table -> look at parseRule variable
-			static void unary(Compiler* comp);
-			static void binary(Compiler* comp);
- 			static void number(Compiler* comp);
-			static void grouping(Compiler* comp);
-			static void literal(Compiler* comp);
-			static void string(Compiler* comp);
-			static void variable(Compiler* comp);
+			static void unary(Compiler* comp, bool can_assign);
+			static void binary(Compiler* comp, bool can_assign);
+ 			static void number(Compiler* comp, bool can_assign);
+			static void grouping(Compiler* comp, bool can_assign);
+			static void literal(Compiler* comp, bool can_assign);
+			static void string(Compiler* comp, bool can_assign);
+			static void variable(Compiler* comp, bool can_assign);
  			void emit_constant(Value value);
 			uint8_t make_constant(Value value);
 
@@ -89,23 +89,23 @@ namespace GDPP
 
 			uint8_t parse_var(const char* message);
 			void define_var(uint8_t global);
-			void named_var(Token name);
+			void named_var(Token name, bool can_assign);
 			uint8_t identifier_constant(Token* name);
 
 	};
 
 
-	typedef std::function<void(Compiler* comp)> ParseFn;
+	typedef std::function<void(Compiler* comp, bool can_assign)> ParseFn;
 
 	struct ParseRule
 	{
-		std::function<void(Compiler* comp)> prefix;
-		std::function<void(Compiler* comp)> infix;
+		std::function<void(Compiler* comp, bool can_assign)> prefix;
+		std::function<void(Compiler* comp, bool can_assign)> infix;
 		Precendence precendence;
 	};
 
 
-	static ParseRule makeData(std::function<void(Compiler* comp)> pref, std::function<void(Compiler* comp)> inf, Precendence pre)
+	static ParseRule makeData(std::function<void(Compiler* comp, bool can_assign)> pref, std::function<void(Compiler* comp, bool can_assign)> inf, Precendence pre)
 	{
 		ParseRule fd = {pref, inf, pre};
 		return fd;

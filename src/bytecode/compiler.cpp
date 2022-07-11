@@ -22,7 +22,10 @@ bool Compiler::compile(std::string* p_src, Chunk* p_chunk)
 	// consume(TK_EOF, "Expect end of expression");
 	while (!match(TK_EOF))
 	{
+		std::cout << TOKEN_NAMES[parser.current.type] << std::endl;
 		declaration();
+		advance();
+
 	}
 	end_compiler();
 	return !parser.hadError;
@@ -84,6 +87,7 @@ void Compiler::statement()
 void Compiler::expression_statement()
 {
 	expression();
+	
 	emit_byte(OP_POP);
 }
 
@@ -123,13 +127,22 @@ void Compiler::define_var(uint8_t global)
 	emit_bytes(OP_DEFINE_GLOBAL, global);
 }
 
-void Compiler::named_var(Token name)
+void Compiler::named_var(Token name, bool can_assign)
 {
 	uint8_t arg = identifier_constant(&name);
-	emit_bytes(OP_GET_GLOBAL, arg);
+
+	if (can_assign && match(EQUAL))
+	{
+		expression();
+		emit_bytes(OP_SET_GLOBAL, arg);
+	}
+	else
+	{
+		emit_bytes(OP_GET_GLOBAL, arg);
+	}
 }
 
-#include "object.h"
+#include "obj_helper.h"
 uint8_t Compiler::identifier_constant(Token* name)
 {
 	return make_constant(OBJ_VAL( ObjHelper::copy_str(name->start, name->length) ));
@@ -147,8 +160,6 @@ bool Compiler::check(TokenType type)
 	return parser.current.type == type;
 }
 
-
-
 const ParseRule* Compiler::get_rule(TokenType p_type)
 {
 	const auto it = parseRule.find(p_type);
@@ -158,7 +169,6 @@ const ParseRule* Compiler::get_rule(TokenType p_type)
 	}
 	return nullptr; //unreachable
 }
-
 
 void Compiler::parse_precedence(Precendence precedence)
 {
@@ -171,13 +181,20 @@ void Compiler::parse_precedence(Precendence precedence)
 		return;
 	}
 
-	prefixRule(this);
+
+	bool can_assign = precedence <= PREC_ASSIGNMENT;
+	prefixRule(this, can_assign);
 
 	while ( precedence <= get_rule(parser.current.type)->precendence )
 	{
 		advance();
 		ParseFn infixRule = get_rule(parser.previous.type)->infix;
-		infixRule(this);
+		infixRule(this, can_assign);
+	}
+
+	if (can_assign && match(EQUAL))
+	{
+		error("invalid assignment target");
 	}
 }
 
@@ -186,7 +203,24 @@ void Compiler::expression()
 	parse_precedence(PREC_ASSIGNMENT);
 }
 
-void Compiler::unary(Compiler* comp)
+uint8_t Compiler::make_constant(Value value)
+{
+	int constant = Compiler::current_chunk()->add_constant( value );
+	if (constant > UINT8_MAX)
+	{
+		Compiler::error("Too many constants in one chunk.");
+		return 0;
+	}
+
+	return (uint8_t)constant;
+}
+
+void Compiler::emit_constant(Value value)
+{
+	emit_bytes(OP_CONSTANT, make_constant(value));
+}
+
+void Compiler::unary(Compiler* comp, bool can_assign)
 {
 	TokenType operatorType = comp->parser.previous.type;
 
@@ -205,7 +239,7 @@ void Compiler::unary(Compiler* comp)
 	}
 }
 
-void Compiler::binary(Compiler* comp)
+void Compiler::binary(Compiler* comp, bool can_assign)
 {
 	TokenType operatorType = comp->parser.previous.type;
 
@@ -230,46 +264,29 @@ void Compiler::binary(Compiler* comp)
 }
 
 #include "object.h"
-void Compiler::string(Compiler* comp)
+void Compiler::string(Compiler* comp, bool can_assign)
 {
 	comp->emit_constant(OBJ_VAL(ObjHelper::copy_str(comp->parser.previous.start + 1, comp->parser.previous.length - 2)));
 }
 
-void Compiler::variable(Compiler* comp)
+void Compiler::variable(Compiler* comp, bool can_assign)
 {
-	comp->named_var(comp->parser.previous);
+	comp->named_var(comp->parser.previous, can_assign);
 }
 
-uint8_t Compiler::make_constant(Value value)
-{
-	int constant = Compiler::current_chunk()->add_constant( value );
-	if (constant > UINT8_MAX)
-	{
-		Compiler::error("Too many constants in one chunk.");
-		return 0;
-	}
-
-	return (uint8_t)constant;
-}
-
-void Compiler::emit_constant(Value value)
-{
-	emit_bytes(OP_CONSTANT, make_constant(value));
-}
-
-void Compiler::number(Compiler* comp)
+void Compiler::number(Compiler* comp, bool can_assign)
 {
 	int value = atoi(comp->parser.previous.start);
 	comp->emit_constant(INT_VAL(value));
 }
 
-void Compiler::grouping(Compiler* comp)
+void Compiler::grouping(Compiler* comp, bool can_assign)
 {
 	comp->expression();
 	comp->consume(RIGHT_PAREN, "Expect ')' after expression.");
 }
 
-void Compiler::literal(Compiler* comp)
+void Compiler::literal(Compiler* comp, bool can_assign)
 {
 	switch(comp->parser.previous.type)
 	{

@@ -1,5 +1,6 @@
 #include "value.h"
 #include "object.h"
+#include "obj_helper.h"
 #include "string.h"
 
 using namespace GDPP;

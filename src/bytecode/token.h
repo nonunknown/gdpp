@@ -21,7 +21,7 @@ namespace GDPP
 		AND, IN, NOT, AS, CLASS, EXTENDS, IS,
 		SIGNAL, AWAIT, CONST, ENUM, STATIC, ELIF, MATCH,
 		 ELSE, FALSE, FUNC, FOR, IF, OR,
-		PRINT, RETURN, TRUE, VAR, WHILE, VOID,
+		PRINT, RETURN, TRUE, VAR, WHILE, VOID, EXIT,
 
 		PI, TAU, INF, NAN, SELF, BREAKPOINT, TOOL, SUPER,
 		BREAK, CONTINUE, PASS, ASSERT, PRELOAD,
@@ -29,7 +29,7 @@ namespace GDPP
 		NIL, TK_ERROR, TK_EOF
 		};
 
-	const char* const TOKEN_NAMES[69] = { 
+	const char* const TOKEN_NAMES[70] = { 
 		// Single-character tokens.
 		"LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
 		"COMMA", "DOT", "MINUS", "PLUS", "SLASH_FORWARD", "STAR", "HASHTAG", "COLON", "SEMI",
@@ -47,7 +47,7 @@ namespace GDPP
 		"AND", "IN", "NOT", "AS", "CLASS", "EXTENDS", "IS",
 		"SIGNAL", "AWAIT", "CONST", "ENUM", "STATIC", "ELIF", "MATCH",
 		 "ELSE", "FALSE", "FUNC", "FOR", "IF", "OR",
-		"PRINT", "RETURN", "TRUE", "VAR", "WHILE", "VOID",
+		"PRINT", "RETURN", "TRUE", "VAR", "WHILE", "VOID", "EXIT",
 
 		"PI", "TAU", "INF", "NAN", "SELF", "BREAKPOINT", "TOOL", "SUPER",
 		"BREAK", "CONTINUE", "PASS", "ASSERT", "PRELOAD",

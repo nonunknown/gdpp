@@ -27,11 +27,13 @@ namespace GDPP
 		OP_POP,
 		OP_DEFINE_GLOBAL,
 		OP_GET_GLOBAL,
+		OP_SET_GLOBAL,
+		OP_EXIT,
 
 		MAX,
 	};
 
-	const char * const OPCODES[19] = 
+	const char * const OPCODES[21] = 
 	{
 		"OP_CONSTANT",
 		"OP_NEGATE",
@@ -51,6 +53,8 @@ namespace GDPP
 		"OP_POP",
 		"OP_DEFINE_GLOBAL",
 		"OP_GET_GLOBAL",
+		"OP_SET_GLOBAL",
+		"OP_EXIT",
 
 		"MAX"
 	};

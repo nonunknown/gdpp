@@ -20,5 +20,10 @@ run: clean all
 $(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(BYTECODE)/*.cpp 
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)
 
+build: clean all
+	clear
+$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(BYTECODE)/*.cpp 
+	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)
+
 clean:
 	-rm $(BIN)/*

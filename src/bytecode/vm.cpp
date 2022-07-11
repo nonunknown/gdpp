@@ -1,6 +1,6 @@
 #include "vm.h"
 #include "common.h"
-#include "object.h"
+#include "obj_helper.h"
 
 #ifdef DEBUG_TRACE_EXECUTION
 	#include "debug.h"
@@ -8,9 +8,11 @@
 
 using namespace GDPP;
 
+VM* VM::instance;
+
 VM::VM()
 {
-	vm_instance = this; //Hacky Singleton, must be removed if multiple instances of it are created! Used in Object.cpp
+	instance = this;
 	objects = nullptr;
 	compiler = Compiler();
 	resetStack();
@@ -18,7 +20,7 @@ VM::VM()
 
 VM::~VM()
 {
-	
+	ObjHelper::free_objs();
 }
 
 InterpretResult VM::interpret(std::string* p_src)
@@ -170,7 +172,11 @@ InterpretResult VM::run()
 			case OP_DEFINE_GLOBAL:
 			{
 				ObjString* name = READ_STRING();
+				std::cout << "defined variable: " << name->chars << std::endl;
+				// globals.insert(name,peek(0));
 				globals[name] = peek(0);
+				pop();
+
 				break;
 			}
 
@@ -178,17 +184,33 @@ InterpretResult VM::run()
 			{
 				ObjString* name = READ_STRING();
 				Value value;
-				if (globals.find(name) != globals.end())
+
+				try
+				{
+					std::cout << "looking for: " << name->chars << std::endl;
+					value = globals[name];
+					push(value);
+				}
+				catch(const std::exception& e)
 				{
 					runtime_error("undefined variable '%s'.", name->chars);
 					return INTERPRET_RUNTIME_ERROR;
 				}
-				value = globals.at(name);
-				push(value);
 				break;
 			}
 
-			case OP_RETURN:
+			case OP_SET_GLOBAL:
+			{
+				ObjString* name = READ_STRING();
+				auto it = globals.find(name);
+				if (it == globals.end()) //if the global variable doesnt exists, report err
+				{
+					runtime_error("Undefined variable '%s'", name->chars);
+				}
+				break;
+			}
+
+			case OP_EXIT:
 				std::cout << "finished" << std::endl;
 				return INTERPRET_OK;
 			

@@ -19,14 +19,12 @@ namespace GDPP
 		INTERPRET_RUNTIME_ERROR
 	} InterpretResult;
 
-	class VM;
-	static VM* vm_instance;
-
 	class VM
 	{
 		public:
 			VM();
 			~VM();
+			static VM* instance;
 			Obj* objects;
 			InterpretResult interpret(std::string* p_src);
 			void resetStack();

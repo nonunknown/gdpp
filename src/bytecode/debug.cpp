@@ -44,6 +44,7 @@ int Disassemble::from_instruction(Chunk* chunk, int offset)
 		case OP_CONSTANT:
 		case OP_DEFINE_GLOBAL:
 		case OP_GET_GLOBAL:
+		case OP_SET_GLOBAL:
 			return constant_instruction(OPCODES[instruction], chunk, offset);
 		case OP_RETURN:
 		case OP_NEGATE:
@@ -60,6 +61,7 @@ int Disassemble::from_instruction(Chunk* chunk, int offset)
 		case OP_LESS:
 		case OP_PRINT:
 		case OP_POP:
+		case OP_EXIT:
 			return simple_instruction(OPCODES[instruction], offset);
 			
 		default:

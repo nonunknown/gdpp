@@ -62,6 +62,7 @@ namespace GDPP
 		{"var",			VAR},
 		{"void",		VOID},
 		{"while",		WHILE},
+		{"exit", 		EXIT}
 	};
 
 	class Scanner
