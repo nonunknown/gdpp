@@ -21,8 +21,9 @@ namespace GDPP
 	} InterpretResult;
 
 	inline int ObjStringCmp(const ObjString *lhs, const ObjString *rhs){
-		int min_length = lhs->length <= rhs->length ? lhs->length : rhs->length;
-		return strncmp(lhs->chars, rhs->chars, min_length);
+		if(lhs->length != rhs->length)
+			return lhs->length - rhs->length;
+		return strncmp(lhs->chars, rhs->chars, lhs->length);
 	}
 
 	struct ObjString_CmpLess{
