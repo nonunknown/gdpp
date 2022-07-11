@@ -1,6 +1,13 @@
 #ifndef GD_TOKEN
 #define GD_TOKEN
 
+// TODO(fusion): This is a C macro that may be defined in math.h "if and only if
+// the implementation supports quiet NaNs for the float type" (C99 spec, section
+// 7.12 paragraph #5).
+#ifdef NAN
+#	undef NAN
+#endif
+
 namespace GDPP
 {
 	enum TokenType {

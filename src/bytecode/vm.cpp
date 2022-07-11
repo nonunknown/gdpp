@@ -68,9 +68,24 @@ InterpretResult VM::run()
 
 	for(;;)
 	{
+		// TODO(fusion): Have these checks only in debug builds. Have assert macros.
+
+		if(ip >= (chunk.code + chunk.count)){
+			std::cout << "REACHED BYTECODE END WITHOUT AN OP_EXIT INSTRUCTION\n";
+			abort();
+		}
+
+		if(stackTop < stack){
+			std::cout << "STACK UNDERFLOW\n";
+			abort();
+		}else if(stackTop >= (stack + STACK_MAX)){
+			std::cout << "STACK OVERFLOW\n";
+			abort();
+		}
+
 		#ifdef DEBUG_TRACE_EXECUTION
 
-			std::cout << "STACK ->	";
+			std::cout << "STACK[" << (stackTop - stack) << "] ->\t";
 			for( Value* slot = stack; slot < stackTop; slot++ )
 			{
 				Print::print_value(*slot);
@@ -213,8 +228,6 @@ InterpretResult VM::run()
 			case OP_EXIT:
 				std::cout << "finished" << std::endl;
 				return INTERPRET_OK;
-			
-
 		}
 	}
 

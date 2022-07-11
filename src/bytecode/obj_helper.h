@@ -19,8 +19,7 @@ namespace GDPP
 		    static void free_objs();
 	};
 
-    #define 
-	ALLOCATE_OBJ(type, obj_type) \
+    #define ALLOCATE_OBJ(type, obj_type) \
 	    (type*)ObjHelper::allocate_obj(sizeof(type), obj_type)
 
     #define OBJ_TYPE(value)         ( AS_OBJ(value)->type )

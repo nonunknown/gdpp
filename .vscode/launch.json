@@ -46,6 +46,17 @@
             ],
             "preLaunchTask": "Laboratory",
             "miDebuggerPath": "/usr/bin/gdb"
-        }
+        },
+        {
+			"name": "x64 - windows",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/bin/main.exe",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}/bin/",
+			"environment": [],
+			"console": "externalTerminal"
+		}
     ]
 }
