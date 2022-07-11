@@ -188,9 +188,13 @@ InterpretResult VM::run()
 			{
 				ObjString* name = READ_STRING();
 				std::cout << "defined variable: " << name->chars << std::endl;
-				// globals.insert(name,peek(0));
-				globals[name] = peek(0);
-				pop();
+
+				auto ret = globals.insert({name, pop()});
+				if(!ret.second)
+				{
+					runtime_error("variable '%s' being redefined", name->chars);
+					return INTERPRET_RUNTIME_ERROR;
+				}
 
 				break;
 			}
@@ -218,16 +222,20 @@ InterpretResult VM::run()
 			{
 				ObjString* name = READ_STRING();
 				auto it = globals.find(name);
-				if (it == globals.end()) //if the global variable doesnt exists, report err
+				if (it == globals.end())
 				{
-					runtime_error("Undefined variable '%s'", name->chars);
+					runtime_error("undefined variable '%s'", name->chars);
+					return INTERPRET_RUNTIME_ERROR;
 				}
+				it->second = pop();
 				break;
 			}
 
 			case OP_EXIT:
+			{
 				std::cout << "finished" << std::endl;
 				return INTERPRET_OK;
+			}
 		}
 	}
 

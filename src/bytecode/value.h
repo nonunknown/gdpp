@@ -71,11 +71,6 @@ namespace GDPP
 		public:
 			static bool values_equal(Value a, Value b);
 	};
-
-
-
-
-
 };
 
 #endif
